@@ -1,0 +1,30 @@
+include::variables.adoc[]
+
+= Generic Adaptor Reference Guide
+:doctype: book
+:icons: font
+:toc2:
+:sectlinks:
+:sectnums:
+:sectanchors:
+:sectlinks:
+
+:homepage: https://github.com/jrc-cise/generic-adaptor-documentation
+:imagesdir: docs/asciidoc/images
+:source-highlighter: coderay
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:source-language: properties
+
+== Project Overview
+
+include::introduction.adoc[leveloffset=1]
+include::features-and-functionalities.adoc[leveloffset=1]
+include::technical-specifications.adoc[leveloffset=1]
+include::installation-setup.adoc[leveloffset=1]
+include::configuration-customization.adoc[leveloffset=1]
+include::api-interface-guide.adoc[leveloffset=1]
+include::additional-resources.adoc[leveloffset=1]

@@ -1,0 +1,97 @@
+#//TODO,@Synchro: check if anything usefull here
+#//concurrent case: This scenario checks the ability of the Adaptor to handle multiple messages concurrently, which is crucial for performance and scalability in a real-world environment.
+  Scenario: Adaptor successfully processes multiple messages
+    Given the adaptor is running and ready to receive messages
+    When multiple messages are sent to the adaptor
+    Then all messages are accepted by the adaptor
+    And all messages are validated successfully
+    And the sender receives a synchronous acknowledgement of successful validation for each message
+    And all messages are transformed into Legacy System data
+    And all messages are passed to the Legacy System successfully
+
+
+#//LS unreachable due to internal issue, This scenario tests the Adaptor's ability to handle cases where messages cannot be transformed into Legacy System data. This is an important aspect of the system to ensure proper error handling and resilience.
+#   hack with 2 actors and checking with mock what reached end will not work because there was an error on a way - where should we catch and report those? and how to recover from them?
+  Scenario: Adaptor fails to transform message into Legacy System data
+    Given the adaptor is running and ready to receive messages
+    When a message is sent to the adaptor
+    Then the adaptor accepts the message
+    And the message is validated successfully
+    And the sender receives a synchronous acknowledgement of successful validation
+    And the message fails to be transformed into Legacy System data
+    And the Legacy System does not receive the message
+    # And what? (the adaptor sends an error ack to the sender?)
+
+
+#//Then the message delivery retries are exhausted without successful message delivery to the Legacy System.
+  Scenario: Message delivery retries are exhausted
+    Given the adaptor is running and ready to receive messages
+    When a message is sent to the adaptor
+    And the message delivery retries are exhausted without successful delivery to the Legacy System
+    Then the message is not passed to the Legacy System
+    And the sender receives an error ack
+
+
+#//Then the Generic Adaptor is unresponsive or offline (not reachable).
+# is there some responsibility for infrastructure, API, to report that adapter is offline?
+  Scenario: Generic Adaptor (apart from API/Gateway) is unresponsive or offline
+    Given the Generic Adaptor (apart from API/Gateway) is unresponsive or offline
+    When a message is sent to the adaptor
+    Then the message is not received by the Generic Adaptor
+    And the sender receives a connection error ack
+
+
+#//Then the Legacy System is unresponsive or offline (not reachable). Important for proper error handling and system resilience.
+  Scenario: Legacy System is unresponsive or offline
+    Given the Legacy System is unresponsive or offline
+    When a message is sent to the adaptor
+    Then the message is received by the Generic Adaptor
+    And the message fails to be passed to the Legacy System
+    And the adaptor sends an error ack to the sender
+OR
+  Scenario: Adaptor fails to send a message to Legacy System due to access failure
+    Given Adaptor receives a valid message
+    And Adaptor responds to the sender with a success acknowledgement
+    When Adaptor tries to pass the transformed message to Legacy System
+    But there is an access failure between Adaptor and Legacy System
+    Then Legacy System does not receive or process the message
+
+
+#//Then the Generic Adaptor cannot perform the necessary data translation and mapping.
+#//Then the message is corrupted or incomplete
+#is Adaptor aware about data model version that is being used, did we ever validated message checking correctness of ns4? "<ns4:PullRequest xmlns:ns4="http://www.cise.eu/servicemodel/v1/message/">"
+#sub-cases:
+#data mapping and translation performed by the Generic Adaptor is invalid or incorrect.
+#XML file is not well-formed or valid.
+#XML is well-formed but CISE data is malformed or missing.
+  Scenario: Generic Adaptor cannot perform necessary data translation and mapping
+    Given the adaptor is running and ready to receive messages
+    When a message is sent to the adaptor
+    And the Generic Adaptor cannot perform necessary data translation and mapping
+    Then the message is not passed to the Legacy System
+    And the adaptor sends an error ack to the sender
+
+
+#//same/similar for LS? are we giving this responsibility totally to client? should there be defined any flows in this area?
+  Scenario: Adaptor fails to authenticate request
+    Given the adaptor is running and ready to receive messages
+    When an unauthorized request is sent to the adaptor
+    Then the adaptor rejects the request with an unauthorized/forbidden error ack
+    And the sender receives the error ack
+
+
+#//additional cases maybe to write scenarios from
+#the message delivery status is not confirmed to the Cise Node.
+#the message type is unknown or unsupported - LS didnt care about this type of message (for example Subscribe, yet it came and is passed through to customers Custom code)
+
+
+#//filter for simulator test metrics collected (is there anything functional from this lists Ive missed?)
+..
+#   Messages Accepted: 894250
+#   Messages Received: 894250
+#   Missing messages List size: 0
+#   Orphan/Doubled List size: 0                                                 #the message is lost or duplicated in transit.
+#   Messages not sent for resources shortage : 0
+#   Messages with too long acceptance time: 20                                  #the message is not delivered within a reasonable time frame by the Generic Adaptor to the Legacy System.
+#   Messages not accepted: 0
+#   Messages with great time lapsed after accepting (> 3000 ms): 0              #the message is not delivered within a reasonable time frame by the Generic Adaptor to the Legacy System.

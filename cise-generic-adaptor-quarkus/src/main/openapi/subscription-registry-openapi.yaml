@@ -1,0 +1,151 @@
+---
+openapi: 3.0.3
+info:
+  title: CISE Node - Subscription Registry API
+  version: 2.2.1
+  description: The Subscription Registry manages the subscriptions to the subscription provider CISE services. 
+tags:
+- name: subscription
+paths:
+  /subscriptions:
+    get:
+      tags:
+      - subscription
+      summary: Get a filtered list of Subscriptions
+      description: Get a filtered list of Subscriptions
+      parameters:
+      - name: expireDateFrom
+        in: query
+        schema:
+          format: date
+          type: string
+      - name: expireDateTo
+        in: query
+        schema:
+          format: date
+          type: string
+      - name: limit
+        in: query
+        schema:
+          format: int32
+          default: "10"
+          maximum: 100
+          minimum: 10
+          type: integer
+      - name: offset
+        in: query
+        schema:
+          format: int32
+          default: "0"
+          minimum: 0
+          type: integer
+      - name: providerServiceId
+        in: query
+        schema:
+          pattern: \S
+          type: string
+          nullable: false
+      - name: smart
+        in: query
+        schema:
+          type: boolean
+      - name: sortBy
+        in: query
+        schema:
+          type: string
+      - name: sortOrder
+        in: query
+        schema:
+          type: string
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: subscriberParticipantId
+        in: query
+        schema:
+          type: string
+      - name: subscriberServiceId
+        in: query
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTOSubscriptionDTO'
+  /subscriptions/{uuid}:
+    put:
+      tags:
+      - subscription
+      summary: Modify the status of a subscription
+      description: Modify the status of a subscription
+      parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionUpdateDTO'
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+      - subscription
+      summary: Delete a Subscription
+      description: Delete a Subscription
+      parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+components:
+  schemas:
+    SubscriptionDTO:
+      type: object
+      properties:
+        expireDate:
+          format: date
+          type: string
+        providerParticipantId:
+          type: string
+        providerServiceId:
+          type: string
+        status:
+          type: string
+        subscriberParticipantId:
+          type: string
+        subscriberServiceId:
+          type: string
+        uuid:
+          type: string
+    ListSubscriptionDTO:
+      type: array
+      items:
+        $ref: '#/components/schemas/SubscriptionDTO'
+    ResponseDTOSubscriptionDTO:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ListSubscriptionDTO'
+        total:
+          format: int32
+          type: integer
+    SubscriptionUpdateDTO:
+      type: object
+      properties:
+        status:
+          pattern: \S
+          type: string
+          nullable: false

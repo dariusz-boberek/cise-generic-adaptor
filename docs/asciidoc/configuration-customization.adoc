@@ -1,0 +1,344 @@
+== Configuration and Customization
+
+=== Application Configuration Properties
+
+To effectively customize and operate the Generic Adaptor, understanding the key configuration properties in `application.properties` is essential. It is important to note that the default `application.properties` file is not included as part of the production code resources in the Quarkus module. This design choice acts as a failsafe, ensuring that the application can only be deployed with deliberately added plugins and specific configuration settings. The absence of a default `application.properties` file prevents accidental or out-of-the-box deployment, emphasizing the need for intentional configuration and deployment with the necessary values and plugins at the desired deployment location.
+
+The properties are separated into different areas of concern. The following tables are organized in a similar fashion.
+
+==== Server Port and HTTPS configuration
+
+[width="100%",options="header",class="tableblock"]
+|===
+| Property | Description | Example Value
+
+|quarkus.http.ssl-port
+| The incoming port for the https connections. When this port is set and the property  `quarkus.http.insecure-requests` is set to `disabled` then this is the main port used by the adaptor to accept messages.
+| 8443
+
+| quarkus.ssl.native
+| Enables the Quarkus native support for SSL
+| true
+
+
+|quarkus.http.insecure-requests
+| Only `disabled` is allowed. **Note** when this property is set to `disabled` the `cise-generic-adaptor` script generates the necessary keystore files for MTLS by extracting the proper certificates from the signature keystore file specified by the `signature.keystore.filename` property. . Additionally, when this property is set, the quarkus.http.port (obsolete) becomes redundant as the plain HTTP port is not activated. Hence, this property should always be set to its default value ‘disabled’
+|disabled
+
+
+
+
+
+|===
+
+==== CISE Message Signature Configuration
+
+[width="100%",options="header",class="tableblock"]
+|===
+| Property | Description | Example Value
+
+| signature.conf.dir
+| Defines the location of the config directory containing the keystore file used for message signing and verification in the CISE adaptor. This directory typically also houses the `application.properties` file. The keystore file plays a crucial role in the security aspects of the adaptor, handling both message integrity and authentication as well as MTLS support.
+| `.` Referring to the default config location
+
+| signature.keystore.filename
+| Keystore file name for message signature.
+| {customName}.jks
+
+| signature.keystore.password
+| Password for the keystore.
+| ***
+
+| signature.privatekey.alias
+| Alias for the private key in the keystore to sign messages.
+| signing.eu.green.gatest
+
+| signature.privatekey.password
+| Password for the signing private key in the keystore.
+| ***
+
+|===
+==== CISE Node URL Address Configuration - Quarkus client
+[width="100%",options="header",class="tableblock"]
+|===
+| Property | Description | Example Value
+
+| adaptor.cise-node-api.address
+| URL of the CISE node.
+| `https://adapter.int.green.eu.testcisenet.eu`
+
+| quarkus.rest-client.cise-messages-rest-client.url
+| The Quarkus internal client URL configuration. It defaults to the CISE Node address property as explained above.
+| ${adaptor.cise-node-messages-url}/messages`
+
+| quarkus.rest-client.cise-messages-rest-client.scope
+| The CDI scope of the REST Client used for injection. This property can contain either a fully qualified class name of a CDI scope annotation (such as "jakarta.enterprise.context.ApplicationScoped") or its simple name (such as "ApplicationScoped").
+| javax.inject.Singleton
+
+| quarkus.rest-client.cise-messages-rest-client.connect-timeout
+| Timeout specified in milliseconds to wait to connect to the remote endpoint (the CISE Node).
+|10000
+
+| quarkus.rest-client.cise-messages-rest-client.read-timeout
+| Timeout specified in milliseconds to wait for a response from the remote endpoint (the CISE Node).
+|10000
+
+|===
+NB: To create a proper keystore file, please refer to the document *CISE_GenericAdaptor_Plugin_Developer_Guide*
+
+==== MTLS configuration
+The Generic Adaptor supports MTLS secure communication with the CISE Node. The following properties set the appropriate parameters for Quarkus and REST clients to support MTLS. Each property is explained in the table below:
+
+[width="100%",options="header",class="tableblock"]
+|===
+| Property | Description | Default Value
+
+|adaptor.ssl.server.alias
+| The `cise-generic-adaptor` script uses this property to know which certificate it should extract from the `signature.keystore.filename` to create the server jks file inside the config directory (`config/serveronly.${signature.keystore.filename}`). The generated file is set in the `quarkus.http.ssl.certificate.key-store-file` to be used as the signing key of the adaptor. The certificate alias should reference the host name of the machine and the node domain e.g. `cise-ga1-green.int.green.eu.testcisenet.eu`.
+|<CHANGE_ME>
+
+|adaptor.ssl.client.alias
+|The `cise-generic-adaptor`` script uses this property to know which certificate it should extract from the `signature.keystore.filename` to create the client jks file inside the config directory (`config/clientonly.${signature.keystore.filename}`). The generated file is set in the `quarkus.rest-client.cise-messages-rest-client.key-store` to be used as the MTLS client key. The certificate alias should start with mtls e.g. `mtls.client.eu.green.gatest2`.
+|<CHANGE_ME>
+
+| quarkus.http.ssl.certificate.trust-store-file
+| The trust store that holds the certificate information of the trusted certificates. Since the certificate of the CISE Node is inside the signature keystore this value is by default set to the signature keystore found inside the config directory.
+|config/${signature.keystore.filename}
+
+|quarkus.http.ssl.certificate.trust-store-password
+| The password of the trust store jks file. If the same jks file used for signature is set in the `quarkus.http.ssl.certificate.trust-store-file` then the same password is set in this property.
+|${signature.keystore.password}
+
+|quarkus.http.ssl.certificate.key-store-file
+| This property does not need to be changed as the required file (`serveronly.${signature.keystore.filename}`) will be automatically generated inside the config directory by the `cise-generic-adaptor` script when the `quarkus.http.insecure-requests` is set to disabled.
+|config/serveronly.${signature.keystore.filename}
+
+|quarkus.http.ssl.certificate.key-store-password
+| The password of the file used in the `quarkus.http.ssl.certificate.key-store-file` . If this file is autogenerated by the cise-generic-adaptor script then the same password used in the signature file will be used.
+| ${signature.keystore.password}
+
+| quarkus.rest-client.cise-messages-rest-client.trust-store
+| The trust store of the REST client. It should default to the signature jks since it contains the certificate of the CISE Node.
+| config/${signature.keystore.filename}
+
+| quarkus.rest-client.cise-messages-rest-client.trust-store-password
+| The password of the trust store file used above. If the signature jks has been used the passwords are automatically set to be the same.
+| ${signature.keystore.password}
+
+| quarkus.rest-client.cise-messages-rest-client.key-store
+| This property does not need to be changed as the required file (`clientonly.${signature.keystore.filename}`) will be automatically generated inside the config directory by the `cise-generic-adaptor` script when the `quarkus.http.insecure-requests` is set to disabled. **Note: In case MTLS is not required this property should point to the jks only (remove the clientonly prefix)**.
+|config/clientonly.${signature.keystore.filename}
+
+| quarkus.rest-client.cise-messages-rest-client.key-store-password
+| The password of the file used in the `quarkus.rest-client.cise-messages-rest-client.key-store` . If this file is autogenerated by the cise-generic-adaptor script then the same password used in the signature file will be used.
+|${signature.keystore.password}
+
+
+|===
+
+==== CISE Node Api configuration
+The Generic Adaptor supports the CISE API services provided by the CISE Node. This happens via REST calls to the node. Each property is explained in the table below:
+
+[width="100%",options="header",class="tableblock"]
+|===
+| Property | Description | Default Value
+
+
+| quarkus.rest-client.cise-rest-api-client.url
+| The Quarkus internal client URL configuration for the service registry API. It defaults to the CISE Node address property as explained above.
+| ${adaptor.cise-node-api.address}$
+
+| quarkus.rest-client.cise-rest-api-client.trust-store
+| The trust store that holds the certificate information of the trusted certificates. Since the certificate of the CISE Node is inside the signature keystore this value is by default set to the signature keystore found inside the config directory.
+|config/${signature.keystore.filename}
+
+| quarkus.rest-client.cise-rest-api-client.trust-store-password
+| The password of the trust store jks file. If the same jks file used for signature is set in the `quarkus.http.ssl.certificate.trust-store-file` then the same password is set in this property.
+|${signature.keystore.password}
+
+| quarkus.rest-client.cise-rest-api-client.key-store
+| The key store of the REST client. It should default to the signature jks since it contains the certificate of the CISE Node.
+| config/${signature.keystore.filename}
+
+| quarkus.rest-client.cise-rest-api-client.key-store-password
+| The password of the key store file used above. If the signature jks has been used, the passwords are automatically set to be the same.
+| ${signature.keystore.password}
+
+| cisenode.token.credentials.username
+| The keycloak username (ClientID) to have access to the api endpoints e.g. cise-admin-console.
+| <CHANGE_ME>
+
+| cisenode.api.credentials.username
+| The keycloak login.
+| <CHANGE_ME>
+
+| cisenode.api.credentials.password
+| The keycloak password.
+| <CHANGE_ME>
+
+|===
+
+==== Generic Adaptor Internal Database Configuration
+
+[width="100%",options="header",class="tableblock"]
+|===
+| Property | Description | Example Value
+| quarkus.datasource.db-kind
+| Specifies the database type, with H2 as the default. Changing to a different database type requires modifying the pom.xml dependencies and rebuilding the source code, as the system is specifically tailored for H2 database integration.
+| h2
+
+| quarkus.datasource.username
+| Username for the database.
+| sa
+
+| quarkus.datasource.password
+| Password for the database. Empty implies no password.
+| (empty)
+
+| quarkus.datasource.jdbc.url
+| JDBC URL for the H2 database.
+| jdbc:h2:file:./db/database;AUTO_SERVER=TRUE;AUTO_SERVER_PORT=41111
+
+| quarkus.hibernate-orm.database.generation
+| Hibernate ORM setting for database schema generation. Updates the schema if necessary.
+| update
+|===
+
+**Generic Adaptor Logging Configuration**
+
+[width="100%",options="header",class="tableblock"]
+|===
+| Property | Description | Example Value
+
+
+| quarkus.log.level
+| Configures the global logging level.
+| INFO
+
+| quarkus.log.category."eu.cise.adaptor".level
+| Sets logging level specifically for the `eu.cise.adaptor` category.
+| INFO
+
+| quarkus.log.file.enable
+| Enables logging to a file.
+| true
+
+| quarkus.log.file.path
+| Specifies the path of the log file.
+| logs/trace.log
+
+| quarkus.log.file.format
+| Defines the format of the log file entries.
+| %d{HH:mm:ss.SSS} %-5p [%c{2.}] (%t) %s%e%n
+
+| quarkus.log.file.level
+| Sets the logging level for file logging.
+| INFO
+
+| quarkus.log.file.json
+| Determines if logging should be in JSON format.
+| false
+
+| quarkus.log.file.json.pretty-print
+| Enables pretty printing for JSON log format.
+| false
+
+| quarkus.log.file.rotation.max-file-size
+| Max size for log file before rotation.
+| 20M
+
+| quarkus.log.file.rotation.max-backup-index
+| Number of rotated log files to keep.
+| 5
+
+| quarkus.log.file.rotation.rotate-on-boot
+| Rotate log file on application boot.
+| true
+
+| quarkus.log.console.enable
+| Enables logging to the console.
+| true
+
+| quarkus.log.console.json
+| Determines if console logging should be in JSON format. See `quarkus.log.file.json` for reference description.
+| false
+
+| quarkus.log.console.json.pretty-print
+| Enables pretty printing for JSON console log format.
+| false
+
+|===
+
+=== Plugin Configuration Properties
+
+Plugins are designed to act as intermediaries, facilitating the translation and handling of data between the CISE Node and specific legacy systems. Their role is to adapt to various data types and communication protocols, ensuring seamless integration within the CISE Network.
+
+The configuration of each plugin revolves around two types of properties:
+
+===== Mandatory Properties:
+
+These are crucial for the basic functioning of the plugin, defining its primary role and communication pattern within the CISE framework.
+
+[cols="1,2,3", options="header"]
+|===
+| Property
+| Description
+| Example
+
+| service-id
+| The unique identifier of the service in the CISE network, following a URN scheme.
+| node02.vessel.pull.provider
+
+| service-role
+| Defines the role of the service in CISE communication, either 'Provider' or 'Consumer'.
+| Provider
+
+| service-operation
+| Type of communication pattern the service supports, like Pull, Push, or Subscribe.
+| Pull
+
+| service-type
+| The main data type or entity the service handles, indicating its primary function.
+| VesselService
+|===
+
+===== Non-Mandatory Properties:
+
+These properties offer additional customization options, allowing the plugin to be fine-tuned for specific operational scenarios or data formats.
+
+[cols="1,2,3", options="header"]
+|===
+| Property
+| Description
+| Example
+
+| adaptor-https.context
+| Context path for receiving messages via HTTPS.
+| /legacy/incoming
+
+| adaptor-http.port
+| Port number for the HTTP connection.
+| 9091
+
+| legacy-http.port
+| Port number for communication with the legacy system.
+| 9092
+|===
+
+
+====== Properties File Structure
+
+Each plugin’s configuration is governed by a properties file, typically named following the pattern {plugin-name}.properties. This file is defined in a class extending PluginConfig, ensuring a standardized approach to plugin configuration.
+
+For example, in a plugin class such as `ivef-ls-vessel-pull-provider-plugin/src/main/java/eu/cise/adaptor/example/plugin/config/PullProviderPluginConfig.java`, the properties file might be referenced as follows:
+
+[source,java]
+----
+@Config.Sources({"file:${adaptor.pluginsDir}/ivef-ls-vessel-pull-provider-plugin.properties",
+"classpath:config/ivef-ls-vessel-pull-provider-plugin.properties"})
+public interface PullProviderPluginConfig extends PluginConfig {
+    // ... other methods and configurations
+}
+----
+
+The properties file is deployed alongside the plugin's executable jar in the plugins directory, maintaining a clean separation of configuration for each plugin. This approach allows for isolated adjustments to individual plugins without impacting the broader system.

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns4:XmlEntityPayload xmlns:ns4="http://www.cise.eu/servicemodel/v1/message/">
+    <InformationSecurityLevel>NonClassified</InformationSecurityLevel>
+    <InformationSensitivity>Amber</InformationSensitivity>
+    <IsPersonalData>false</IsPersonalData>
+    <Purpose>BorderMonitoring</Purpose>
+    <EnsureEncryption>false</EnsureEncryption>
+    <Risk>
+        <RiskProbability>Probable</RiskProbability>
+        <RiskType>IllegalImmigration</RiskType>
+    </Risk>
+</ns4:XmlEntityPayload>

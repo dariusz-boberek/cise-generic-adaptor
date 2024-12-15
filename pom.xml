@@ -1,0 +1,380 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>eu.cise.adaptor</groupId>
+    <artifactId>cise-generic-adaptor</artifactId>
+    <version>3.0.0</version>
+    <name>cise-generic-adaptor</name>
+    <modules>
+        <!-- Modules that have this pom as parent-->
+        <module>cise-generic-adaptor-core</module>
+        <!-- Modules that don't have this as parent, but they are its children so that they are built-->
+        <module>cise-generic-adaptor-plugin-api</module>
+        <module>cise-generic-adaptor-quarkus</module>
+        <module>cise-generic-adaptor-assembly</module>
+    </modules>
+    <packaging>pom</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- tests -->
+        <junit-jupiter-engine.version>5.9.0</junit-jupiter-engine.version>
+        <hamcrest-all.version>1.3</hamcrest-all.version>
+        <assertj-core.version>3.24.2</assertj-core.version>
+        <mockito-core.version>5.1.1</mockito-core.version>
+        <!-- maven plugins -->
+        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+        <surefire.java.args>-Djdk.xml.xpathExprGrpLimit=0 -Djdk.xml.xpathExprOpLimit=0 -Djdk.xml.xpathTotalOpLimit=0
+        </surefire.java.args>
+        <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
+        <maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
+        <maven-asciidoctor-plugin.version>2.2.2</maven-asciidoctor-plugin.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <source.version>11</source.version>
+        <target.version>11</target.version>
+        <compiler-plugin.version>3.10.1</compiler-plugin.version>
+        <!-- cise dependencies -->
+        <cise.libraries.version>2.3.2-2</cise.libraries.version>
+        <main.basedir>${project.basedir}</main.basedir>
+
+
+    </properties>
+
+    <build>
+        <finalName>cise-generic-adaptor</finalName>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <argLine>${surefire.java.args}</argLine>
+                        <includes>
+                            <include>**/*Spec.java</include>
+                            <include>**/*Test*.java</include>
+                        </includes>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-failsafe-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven-jar-plugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <mainClass>eu.cise.adaptor.core.adapters.DomainContext</mainClass>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <configuration>
+                        <filesets>
+                            <fileset>
+                                <directory>${basedir}/docs/target</directory>
+                                <includes>
+                                    <include>**</include>
+                                </includes>
+                                <followSymlinks>false</followSymlinks>
+                            </fileset>
+                        </filesets>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>javadoc-output-html</id>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>aggregate</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <doctitle>${project.name} ${project.version}</doctitle>
+                        <windowtitle>JRC: API for ${project.name} ${project.version}</windowtitle>
+                        <overview>${basedir}/docs/api/overview.html</overview>
+                        <description>Generates aggregated Javadoc API documentation.</description>
+                        <charset>UTF-8</charset>
+                        <failOnError>true</failOnError>
+                        <failOnWarnings>true</failOnWarnings>
+                        <header>JRC: #header, API for ${project.name} ${project.version}</header>
+                        <level>protected</level>
+                        <detectLinks>true</detectLinks>
+                        <detectJavaApiLink>true</detectJavaApiLink>
+                        <reportOutputDirectory>${basedir}</reportOutputDirectory>
+                        <destDir>docs/target/api/html</destDir>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.asciidoctor</groupId>
+                    <artifactId>asciidoctor-maven-plugin</artifactId>
+                    <version>${maven-asciidoctor-plugin.version}</version>
+                    <configuration>
+                        <sourceDirectory>${basedir}/docs/asciidoc</sourceDirectory>
+                        <attributes>
+                            <images>images</images>
+                        </attributes>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>asciidoc-output-html
+                            </id>                                                               <!-- UNIQUE IDENTIFIER -->
+                            <phase>generate-resources
+                            </phase>                                                           <!-- BY DEFAULT PLUGIN IS NOT ATTACHED TO ANY PHASE, NEED TO PROVIDE -->
+                            <goals>
+                                <goal>process-asciidoc
+                                </goal>                                                           <!-- NAME OF ASCIIDOC EXECUTION GOAL-->
+                            </goals>
+                            <configuration>
+                                <backend>html5</backend>
+                                <outputDirectory>${basedir}/docs/target/asciidoc-html</outputDirectory>
+                                <attributes>
+                                    <stylesheet>${basedir}/docs/asciidoc/stylesheets/javadoc.css</stylesheet>
+                                    <sourceHighlighter>highlightjs</sourceHighlighter>
+                                    <toc/>
+                                    <icons>font</icons>
+                                    <idprefix/>
+                                    <idseparator>-</idseparator>
+                                </attributes>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.10</version>
+                    <executions>
+                        <execution>
+                            <id>prepare-agent</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>report</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- maven dependencies plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.9</version>
+                    <configuration>
+                        <artifactItems>
+                            <artifactItem>
+                                <groupId>eu.europa.ec.jrc.marex</groupId>
+                                <artifactId>cise-slf4j-bom</artifactId>
+                                <version>${cise.libraries.version}</version>
+                                <type>pom</type>
+                            </artifactItem>
+                            <artifactItem>
+                                <groupId>eu.europa.ec.jrc.marex</groupId>
+                                <artifactId>cise-models-bom</artifactId>
+                                <version>${cise.libraries.version}</version>
+                                <type>pom</type>
+                            </artifactItem>
+                        </artifactItems>
+                        <!-- other configurations here -->
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler-plugin.version}</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <inherited>false</inherited>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <inherited>false</inherited>
+            </plugin>
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <inherited>false</inherited>
+            </plugin>
+
+        </plugins>
+    </build>
+    <!-- To generate third party txt  execute the following profile through the command: mvn clean install -Dgen-third-party -->
+    <profiles>
+        <profile>
+            <id>gen-third-party</id>
+            <activation>
+                <property>
+                    <name>gen-third-party</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <version>2.0.0</version>
+                        <configuration>
+                            <skipAggregateAddThirdParty>false</skipAggregateAddThirdParty>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>download-licenses</id>
+                                <goals>
+                                    <goal>aggregate-add-third-party</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    <dependencyManagement>
+        <dependencies>
+            <!-- asciidoc dependencies -->
+            <dependency>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctorj</artifactId>
+                <version>2.5.7</version>
+            </dependency>
+            <dependency>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctorj-pdf</artifactId>
+                <version>2.3.4</version>
+            </dependency>
+            <!-- cise dependencies -->
+            <dependency>
+                <artifactId>eucise-model-helpers</artifactId>
+                <groupId>eu.europa.ec.jrc.marex</groupId>
+                <version>${cise.libraries.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>signature-adapters</artifactId>
+                <groupId>eu.europa.ec.jrc.marex</groupId>
+                <version>${cise.libraries.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.jrc.marex</groupId>
+                <artifactId>cise-dispatcher-adapters</artifactId>
+                <version>${cise.libraries.version}</version>
+            </dependency>
+
+
+            <!-- testing Moved from dependencies -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit-jupiter-engine.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit-jupiter-engine.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit-jupiter-engine.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>${hamcrest-all.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj-core.version}</version>
+                <scope>test</scope>
+                <exclusions>
+                    <!-- byte-buddy already present in  mockito-core -->
+                    <exclusion>
+                        <groupId>net.bytebuddy</groupId>
+                        <artifactId>byte-buddy</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito-core.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>file-snapshots</id>
+            <url>file://${main.basedir}/cise-core-repo/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+
+        <repository>
+            <id>file-releases</id>
+            <url>file://${main.basedir}/cise-core-repo/releases</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+</project>

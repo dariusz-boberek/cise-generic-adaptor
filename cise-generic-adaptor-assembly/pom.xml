@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>cise-generic-adaptor</artifactId>
+        <groupId>eu.cise.adaptor</groupId>
+        <version>3.0.0</version>
+    </parent>
+
+    <artifactId>cise-generic-adaptor-assembly</artifactId>
+
+    <packaging>pom</packaging>
+
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+
+                            <!-- cise-generic-adaptor-docs-->
+                            <execution>
+                                <id>package-documentation</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <finalName>cise-generic-adaptor-${project.version}-docs</finalName>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <outputDirectory>../target/</outputDirectory>
+                                    <descriptors>
+                                        <descriptor>src/main/assemblies/documentation.xml</descriptor>
+                                    </descriptors>
+                                    <tarLongFileMode>gnu</tarLongFileMode>
+                                </configuration>
+                            </execution>
+
+                            <!-- cise-generic-adaptor-bin -->
+                            <execution>
+                                <id>bin-package-generation</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <finalName>cise-generic-adaptor-${project.version}-bin</finalName>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <outputDirectory>../target/</outputDirectory>
+                                    <descriptors>
+                                        <descriptor>src/main/assemblies/bin.xml</descriptor>
+                                    </descriptors>
+                                    <tarLongFileMode>gnu</tarLongFileMode>
+                                </configuration>
+                            </execution>
+
+                            <!-- cise-generic-adaptor-src -->
+                            <execution>
+                                <id>emulator-src</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <finalName>cise-generic-adaptor-${project.version}-src</finalName>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <outputDirectory>../target/</outputDirectory>
+                                    <descriptors>
+                                        <descriptor>src/main/assemblies/src.xml</descriptor>
+                                    </descriptors>
+                                    <tarLongFileMode>gnu</tarLongFileMode>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+
+</project>

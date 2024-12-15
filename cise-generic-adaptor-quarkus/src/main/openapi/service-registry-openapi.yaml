@@ -1,0 +1,2664 @@
+---
+openapi: 3.0.3
+info:
+  title: CISE Service Registry
+  description: Service Registry API for CISE Node
+  contact:
+    name: European Dynamics
+    email: emsa-cise-tech@eurodyn.com
+  version: 2.3.2-2
+tags:
+- name: authority
+  description: The term refers to a Member State or an Agency. Each participant authority
+    may have more than one legacy systems.
+- name: contact-person
+  description: "A contact person which can be associated to authorities, nodes and\
+    \ participants."
+- name: node
+  description: A Node is the software that enables the exchange of messages between
+    the participants. A node may have multiple registered Participants (i.e. legacy
+    systems).
+- name: participant
+  description: The term refers to a legacy system that need to exchange information
+    among other legacy systems/participants using the CISE node.
+- name: service
+  description: It is a part of the information system of a CISE participant and is
+    able to provide and consume information to/from other CISE participants. Each
+    Participant can provide multiple Services.
+paths:
+  /authorities/local:
+    get:
+      tags:
+      - authority
+      summary: Get a filtered list of Authorities for the local node
+      description: Get a filtered list of Authorities for the local node
+      parameters:
+      - name: community
+        in: query
+        description: Community of the authority (multiple)
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: country
+        in: query
+        description: Country of the authority (multiple)
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: limit
+        in: query
+        description: The size of the results page
+        schema:
+          format: int32
+          default: "10"
+          maximum: 100
+          minimum: 10
+          type: integer
+      - name: name
+        in: query
+        description: Name of the authority (like)
+        schema:
+          type: string
+      - name: offset
+        in: query
+        description: The starting entry of the page
+        schema:
+          format: int32
+          default: "0"
+          minimum: 0
+          type: integer
+      - name: sortBy
+        in: query
+        description: The field to sort by the results
+        schema:
+          type: string
+      - name: sortOrder
+        in: query
+        description: The sorting direction
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTOAuthorityDTO'
+    post:
+      tags:
+      - authority
+      summary: Create a local authority
+      description: Create a local authority
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorityBaseDTO'
+        required: true
+      responses:
+        "201":
+          description: Successful operation
+          headers:
+            Location:
+              description: The URI of the created resource
+              style: simple
+              schema:
+                type: string
+        "400":
+          description: The request was not valid
+  /authorities/local/{uuid}:
+    get:
+      tags:
+      - authority
+      summary: Get a local Authority
+      description: Get a local Authority
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the Authority
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorityDetailsDTO'
+        "404":
+          description: Not found
+    put:
+      tags:
+      - authority
+      summary: Update a local Authority
+      description: Update a local Authority
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the Authority
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorityBaseDTO'
+        required: true
+      responses:
+        "204":
+          description: Successful operation
+        "404":
+          description: Not found
+        "400":
+          description: The request was not valid
+    delete:
+      tags:
+      - authority
+      summary: Delete a local Authority
+      description: Delete a local Authority
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the Authority
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "204":
+          description: Successful operation
+        "404":
+          description: Not found
+        "400":
+          description: The request was not valid
+  /authorities/remote:
+    get:
+      tags:
+      - authority
+      summary: Get a list of remote authorities with filtering
+      description: Get a list of remote authorities with filtering
+      parameters:
+      - name: community
+        in: query
+        description: Community of the authority (multiple)
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: country
+        in: query
+        description: Country of the authority (multiple)
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: limit
+        in: query
+        description: The size of the results page
+        schema:
+          format: int32
+          default: "10"
+          maximum: 100
+          minimum: 10
+          type: integer
+      - name: name
+        in: query
+        description: Name of the authority (like)
+        schema:
+          type: string
+      - name: offset
+        in: query
+        description: The starting entry of the page
+        schema:
+          format: int32
+          default: "0"
+          minimum: 0
+          type: integer
+      - name: sortBy
+        in: query
+        description: The field to sort by the results
+        schema:
+          type: string
+      - name: sortOrder
+        in: query
+        description: The sorting direction
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTOAuthorityDTO'
+  /authorities/remote/{uuid}:
+    get:
+      tags:
+      - authority
+      summary: Get a remote Authority
+      description: Get a remote Authority
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the Authority
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorityDetailsDTO'
+        "404":
+          description: Not found
+  /contact-persons/local:
+    get:
+      tags:
+      - contact-person
+      summary: Get a filtered list of Contact Persons for the local node
+      description: Get a filtered list of Contact Persons for the local node
+      parameters:
+      - name: authorityUUID
+        in: query
+        description: The UUID of the parent Authority
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: contactFor
+        in: query
+        description: Sort order
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: country
+        in: query
+        description: The Country of the parent Authority
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: email
+        in: query
+        description: Email of the Contact Person
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: The size of the results page
+        schema:
+          format: int32
+          default: "10"
+          maximum: 100
+          minimum: 10
+          type: integer
+      - name: nameSurname
+        in: query
+        description: Name & Surname of the Contact Person
+        schema:
+          type: string
+      - name: offset
+        in: query
+        description: The starting entry of the page
+        schema:
+          format: int32
+          default: "0"
+          minimum: 0
+          type: integer
+      - name: sortBy
+        in: query
+        description: The field to sort by the results
+        schema:
+          type: string
+      - name: sortOrder
+        in: query
+        description: The sorting direction
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTOContactPersonDTO'
+    post:
+      tags:
+      - contact-person
+      summary: Create a local Contact Person
+      description: Create a local Contact Person
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactPersonCreateDTO'
+        required: true
+      responses:
+        "201":
+          description: Successful operation
+          headers:
+            Location:
+              description: The URI of the created resource
+              style: simple
+              schema:
+                type: string
+        "400":
+          description: The request was not valid
+  /contact-persons/local/picklists/authorities:
+    get:
+      tags:
+      - contact-person
+      summary: Get a list of Authorities for the local node
+      description: Get a list of Authorities for the local node
+      responses:
+        "200":
+          description: Successful operation
+  /contact-persons/local/{uuid}:
+    get:
+      tags:
+      - contact-person
+      summary: Get a local Contact Person
+      description: Get a local Contact Person
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the local Contact Person
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactPersonDTO'
+        "404":
+          description: Not found
+    put:
+      tags:
+      - contact-person
+      summary: Update a local Contact Person
+      description: Update a local Contact Person
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the local Contact Person
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactPersonBaseDTO'
+        required: true
+      responses:
+        "204":
+          description: Successful operation
+        "404":
+          description: Not found
+        "400":
+          description: The request was not valid
+    delete:
+      tags:
+      - contact-person
+      summary: Delete a local Contact Person
+      description: Delete a local Contact Person
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the local Contact Person
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "204":
+          description: Successful operation
+        "404":
+          description: Not found
+        "400":
+          description: The request was not valid
+  /contact-persons/remote:
+    get:
+      tags:
+      - contact-person
+      summary: Get a filtered list of Contact Persons for the remote nodes
+      description: Get a filtered list of Contact Persons for the remote nodes
+      parameters:
+      - name: authorityUUID
+        in: query
+        description: The UUID of the parent Authority
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: contactFor
+        in: query
+        description: Sort order
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: country
+        in: query
+        description: Country of the Contact Person
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: email
+        in: query
+        description: Email of the Contact Person
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: The size of the results page
+        schema:
+          format: int32
+          default: "10"
+          maximum: 100
+          minimum: 10
+          type: integer
+      - name: nameSurname
+        in: query
+        description: Name & Surname of the Contact Person
+        schema:
+          type: string
+      - name: offset
+        in: query
+        description: The starting entry of the page
+        schema:
+          format: int32
+          default: "0"
+          minimum: 0
+          type: integer
+      - name: sortBy
+        in: query
+        description: The field to sort by the results
+        schema:
+          type: string
+      - name: sortOrder
+        in: query
+        description: The sorting direction
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTOContactPersonDTO'
+  /contact-persons/remote/picklists/authorities:
+    get:
+      tags:
+      - contact-person
+      summary: Get a list of Authorities for the remote nodes
+      description: Get a list of Authorities for the remote nodes
+      responses:
+        "200":
+          description: Successful operation
+  /contact-persons/remote/{uuid}:
+    get:
+      tags:
+      - contact-person
+      summary: Get a remote Contact Person
+      description: Get a remote Contact Person
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the local Contact Person
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactPersonDTO'
+        "404":
+          description: Not found
+  /node:
+    get:
+      tags:
+      - node
+      summary: Get the local Node
+      description: Get the metadata of the node hosting the cise application.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeDTO'
+  /node/config:
+    get:
+      tags:
+      - node
+      summary: Get local Node configuration
+      description: Get the detailed configuration of the node running the cise node
+        application.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeConfigurationDTO'
+    put:
+      tags:
+      - node
+      summary: Update local Node configuration
+      description: Updates the configuration of the node running the cise node application.
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NodeConfigurationUpdateDTO'
+        required: true
+      responses:
+        "204":
+          description: Successful operation
+        "400":
+          description: The request was not valid
+    post:
+      tags:
+      - node
+      summary: Create local Node configuration
+      description: Creates the detailed configuration of the node running the cise
+        node application.
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NodeConfigurationCreateDTO'
+        required: true
+      responses:
+        "201":
+          description: Successful operation
+          headers:
+            Location:
+              description: The URI of the created resource
+              style: simple
+              schema:
+                type: string
+        "400":
+          description: The request was not valid
+  /node/config/trigger-sync-pull:
+    put:
+      tags:
+      - node
+      summary: Triggers sync pull
+      description: Triggers sync pull for the node running the cise node application.
+      responses:
+        "204":
+          description: Successful operation
+  /node/picklists/contact-persons/{authorityUUID}:
+    get:
+      tags:
+      - node
+      summary: Get a list of Contact Persons for the local authority
+      description: Get a list of Contact Persons for the local authority
+      parameters:
+      - name: authorityUUID
+        in: path
+        description: UUID of the local authority
+        required: true
+        schema:
+          minLength: 1
+          pattern: "[a-f0-9]{8}(\\-[a-f0-9]{4}){3}\\-[a-f0-9]{12}"
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContactPersonBaseWithUuidDTO'
+  /nodes/remote:
+    get:
+      tags:
+      - node
+      summary: Get a list of remote nodes with filtering
+      description: Get a list of remote nodes with filtering
+      parameters:
+      - name: sortBy
+        in: query
+        description: The field to sort by the results
+        schema:
+          type: string
+      - name: sortOrder
+        in: query
+        description: Sort order
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTONodeDTO'
+    post:
+      tags:
+      - node
+      summary: Create a remote Node reference in the local Node
+      description: Create a remote Node reference in the local Node
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NodeBaseDTO'
+        required: true
+      responses:
+        "201":
+          description: Successful operation
+          headers:
+            Location:
+              description: The URI of the created resource
+              style: simple
+              schema:
+                type: string
+        "400":
+          description: The request was not valid
+  /nodes/remote/{uuid}:
+    get:
+      tags:
+      - node
+      summary: Get a local reference of a remote Node
+      description: Get a local reference of a remote Node
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the remote Node
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeDTO'
+        "404":
+          description: Not found
+    put:
+      tags:
+      - node
+      summary: Update a local reference of a remote Node
+      description: Update a local reference of a remote Node
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the remote Node
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NodeBaseDTO'
+        required: true
+      responses:
+        "204":
+          description: Successful operation
+        "404":
+          description: Not found
+        "400":
+          description: The request was not valid
+    delete:
+      tags:
+      - node
+      summary: Delete a local reference of a remote Node
+      description: Update a local reference of a remote Node
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the remote Node
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "204":
+          description: Successful operation
+        "404":
+          description: Not found
+        "400":
+          description: The request was not valid
+  /participants:
+    get:
+      tags:
+      - participant
+      summary: Get a list of participants with filtering
+      description: Get a list of participants with filtering
+      parameters:
+      - name: limit
+        in: query
+        description: The size of the results page
+        schema:
+          format: int32
+          default: "10"
+          maximum: 100
+          minimum: 10
+          type: integer
+      - name: offset
+        in: query
+        description: The starting entry of the page
+        schema:
+          format: int32
+          default: "0"
+          minimum: 0
+          type: integer
+      - name: participantId
+        in: query
+        description: The identifier of the Participant
+        schema:
+          type: string
+      - name: smart
+        in: query
+        description: Indicates whether a smart search with distinct will be performed
+          for a specific field
+        schema:
+          type: boolean
+      - name: sortBy
+        in: query
+        description: The field to sort by the results
+        schema:
+          type: string
+      - name: sortOrder
+        in: query
+        description: The sorting direction
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTOParticipantDTO'
+  /participants/local:
+    get:
+      tags:
+      - participant
+      summary: Get a filtered list of Participants for the local node
+      description: Get a filtered list of Participants for the local node
+      parameters:
+      - name: authorityUUID
+        in: query
+        description: UUID of the parent Authority
+        schema:
+          pattern: "[a-f0-9]{8}(\\-[a-f0-9]{4}){3}\\-[a-f0-9]{12}"
+          type: string
+      - name: community
+        in: query
+        description: Community of the Participant (multiple)
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: function
+        in: query
+        description: Function of the Participant (multiple)
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: limit
+        in: query
+        description: The size of the results page
+        schema:
+          format: int32
+          default: "10"
+          maximum: 100
+          minimum: 10
+          type: integer
+      - name: name
+        in: query
+        description: The name of the Participant (like)
+        schema:
+          type: string
+      - name: offset
+        in: query
+        description: The starting entry of the page
+        schema:
+          format: int32
+          default: "0"
+          minimum: 0
+          type: integer
+      - name: participantId
+        in: query
+        description: The identifier of the Participant
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: The field to sort by the results
+        schema:
+          type: string
+      - name: sortOrder
+        in: query
+        description: The sorting direction
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTOParticipantDTO'
+    post:
+      tags:
+      - participant
+      summary: Create a local participant
+      description: Create a local participant
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParticipantCreateDTO'
+        required: true
+      responses:
+        "201":
+          description: Successful operation
+          headers:
+            Location:
+              description: The URI of the created resource
+              style: simple
+              schema:
+                type: string
+        "400":
+          description: The request was not valid
+  /participants/local/picklists/authorities:
+    get:
+      tags:
+      - participant
+      summary: Get a list of Authorities for the local node
+      description: Get a list of Authorities for the local node
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UUIDDescriptionCountryDTO'
+  /participants/local/picklists/contact-persons/{authorityUUID}:
+    get:
+      tags:
+      - participant
+      summary: Get a list of Contact Persons for the local authority
+      description: Get a list of Contact Persons for the local authority
+      parameters:
+      - name: authorityUUID
+        in: path
+        description: UUID of the local Authority
+        required: true
+        schema:
+          minLength: 1
+          pattern: "[a-f0-9]{8}(\\-[a-f0-9]{4}){3}\\-[a-f0-9]{12}"
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContactPersonBaseWithUuidDTO'
+  /participants/local/stats/count:
+    get:
+      tags:
+      - participant
+      summary: Get number of local Participants
+      description: Get the number of Participants in the local node.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LongDTO'
+  /participants/local/{uuid}:
+    get:
+      tags:
+      - participant
+      summary: Get a local Participant
+      description: Get a local Participant
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the local Participant
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantDTO'
+        "404":
+          description: Not found
+    put:
+      tags:
+      - participant
+      summary: Update a local Participant
+      description: Update a local Participant
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the local Participant
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParticipantUpdateDTO'
+        required: true
+      responses:
+        "204":
+          description: Successful operation
+        "404":
+          description: Not found
+        "400":
+          description: The request was not valid
+    delete:
+      tags:
+      - participant
+      summary: Delete a local Participant
+      description: Delete a local Participant
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the local Participant
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "204":
+          description: Successful operation
+        "404":
+          description: Not found
+        "400":
+          description: The request was not valid
+  /participants/remote:
+    get:
+      tags:
+      - participant
+      summary: Get a list of remote participants with filtering
+      description: Get a list of remote participants with filtering
+      parameters:
+      - name: community
+        in: query
+        description: Community of the Participant
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: country
+        in: query
+        description: Country of the parent Authority (multiple)
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: function
+        in: query
+        description: Function of the Participant
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: limit
+        in: query
+        description: The size of the results page
+        schema:
+          format: int32
+          default: "10"
+          maximum: 100
+          minimum: 10
+          type: integer
+      - name: name
+        in: query
+        description: Name of the Participant (like)
+        schema:
+          type: string
+      - name: nodeId
+        in: query
+        description: The identifier of the Node
+        schema:
+          type: string
+      - name: offset
+        in: query
+        description: The starting entry of the page
+        schema:
+          format: int32
+          default: "0"
+          minimum: 0
+          type: integer
+      - name: participantId
+        in: query
+        description: The identifier of the Participant
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: The field to sort by the results
+        schema:
+          type: string
+      - name: sortOrder
+        in: query
+        description: The sorting direction
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTOParticipantDTO'
+  /participants/remote/stats/count:
+    get:
+      tags:
+      - participant
+      summary: Get number of remote Participants
+      description: Get the number of Participants in the remote nodes.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LongDTO'
+  /participants/remote/{uuid}:
+    get:
+      tags:
+      - participant
+      summary: Get a remote Participant
+      description: Get a remote Participant
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the remote Participant
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantDTO'
+        "404":
+          description: Not found
+  /services:
+    get:
+      tags:
+      - service
+      summary: Get a list of service with filtering
+      description: Get a list of service with filtering
+      parameters:
+      - name: limit
+        in: query
+        description: The size of the results page
+        schema:
+          format: int32
+          default: "10"
+          maximum: 100
+          minimum: 10
+          type: integer
+      - name: offset
+        in: query
+        description: The starting entry of the page
+        schema:
+          format: int32
+          default: "0"
+          minimum: 0
+          type: integer
+      - name: serviceId
+        in: query
+        schema:
+          type: string
+      - name: serviceOperation
+        in: query
+        description: Operation of the Service
+        schema:
+          type: string
+      - name: serviceRole
+        in: query
+        description: Role of the Service
+        schema:
+          type: string
+      - name: serviceStatus
+        in: query
+        description: Status of the Service
+        schema:
+          type: array
+          items:
+            type: string
+      - name: serviceType
+        in: query
+        description: Type of the Service
+        schema:
+          type: string
+      - name: smart
+        in: query
+        description: Indicates whether a smart search with distinct will be performed
+          for a specific field
+        schema:
+          type: boolean
+      - name: sortBy
+        in: query
+        description: The field to sort by the results
+        schema:
+          type: string
+      - name: sortOrder
+        in: query
+        description: The sorting direction
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTOServiceDTO'
+  /services/local:
+    get:
+      tags:
+      - service
+      summary: Get a filtered list of Services for the local node
+      description: Get a filtered list of Services for the local node
+      parameters:
+      - name: limit
+        in: query
+        description: The size of the results page
+        schema:
+          format: int32
+          default: "10"
+          maximum: 100
+          minimum: 10
+          type: integer
+      - name: offset
+        in: query
+        description: The starting entry of the page
+        schema:
+          format: int32
+          default: "0"
+          minimum: 0
+          type: integer
+      - name: participantCommunity
+        in: query
+        description: Community of the Participant
+        schema:
+          type: string
+      - name: participantFunction
+        in: query
+        description: Function of the Participant
+        schema:
+          type: string
+      - name: participantId
+        in: query
+        description: Identifier of the Participant
+        schema:
+          type: string
+      - name: serviceId
+        in: query
+        description: Service identifier
+        schema:
+          type: string
+      - name: serviceOperation
+        in: query
+        description: Operation of the Service
+        schema:
+          type: string
+      - name: serviceRole
+        in: query
+        description: Role of the Service
+        schema:
+          type: string
+      - name: serviceStatus
+        in: query
+        description: Status of the Service
+        schema:
+          type: string
+      - name: serviceType
+        in: query
+        description: Type of the Service
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: The field to sort by the results
+        schema:
+          type: string
+      - name: sortOrder
+        in: query
+        description: The sorting direction
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTOServiceDTO'
+    post:
+      tags:
+      - service
+      summary: Create a local Service
+      description: Create a local Service
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceCreateDTO'
+        required: true
+      responses:
+        "201":
+          description: Successful operation
+          headers:
+            Location:
+              description: The URI of the created resource
+              style: simple
+              schema:
+                type: string
+        "400":
+          description: The request was not valid
+  /services/local/picklists/participants:
+    get:
+      tags:
+      - service
+      summary: Get a list of Participants for the local node
+      description: Get a list of Participants for the local node
+      responses:
+        "200":
+          description: OK
+  /services/local/smart-search/participants:
+    get:
+      tags:
+      - service
+      summary: Get a filtered list of Participants for the local node
+      description: Get a filtered list of Participants for the local node
+      parameters:
+      - name: limit
+        in: query
+        description: The size of the results page
+        schema:
+          format: int32
+          default: "10"
+          maximum: 100
+          minimum: 10
+          type: integer
+      - name: participantCommunity
+        in: query
+        description: Community of the Participant
+        schema:
+          type: string
+      - name: participantFunction
+        in: query
+        description: Function of the Participant
+        schema:
+          type: string
+      - name: participantId
+        in: query
+        description: Identifier of the Participant
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /services/local/smart-search/services:
+    get:
+      tags:
+      - service
+      summary: Get a filtered list of Services for the local node
+      description: Get a filtered list of Services for the local node
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          format: int32
+          default: "10"
+          maximum: 100
+          minimum: 10
+          type: integer
+      - name: serviceId
+        in: query
+        description: Identifier of the Service
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /services/local/stats/count:
+    get:
+      tags:
+      - service
+      summary: Get number of local Services
+      description: Get the number of Services in the local node.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LongDTO'
+  /services/local/{uuid}:
+    get:
+      tags:
+      - service
+      summary: Get a local Service
+      description: Get a local Service
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the Service
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceDTO'
+        "404":
+          description: Not found
+    put:
+      tags:
+      - service
+      summary: Update a local Service
+      description: Update a local Service
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the Service
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceBaseDTO'
+        required: true
+      responses:
+        "204":
+          description: Successful operation
+        "404":
+          description: Not found
+        "400":
+          description: The request was not valid
+    delete:
+      tags:
+      - service
+      summary: Delete a local Service
+      description: Delete a local Service
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the Service
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "204":
+          description: Successful operation
+        "404":
+          description: Not found
+        "400":
+          description: The request was not valid
+  /services/remote:
+    get:
+      tags:
+      - service
+      summary: Get a list of remote services with filtering
+      description: Get a list of remote services with filtering
+      parameters:
+      - name: dataFreshness
+        in: query
+        description: Data Freshness of the Service
+        schema:
+          type: string
+      - name: dataLocation
+        in: query
+        description: Area of Interest for the Service
+        schema:
+          maxItems: 1000
+          type: array
+          items:
+            type: string
+      - name: limit
+        in: query
+        description: The size of the results page
+        schema:
+          format: int32
+          default: "10"
+          maximum: 100
+          minimum: 10
+          type: integer
+      - name: offset
+        in: query
+        description: The starting entry of the page
+        schema:
+          format: int32
+          default: "0"
+          minimum: 0
+          type: integer
+      - name: participantCommunity
+        in: query
+        description: Community of the Participant
+        schema:
+          type: string
+      - name: participantCountry
+        in: query
+        description: Country of the Participant
+        schema:
+          type: string
+      - name: participantFunction
+        in: query
+        description: Function of the Participant
+        schema:
+          type: string
+      - name: participantId
+        in: query
+        description: Identifier of the Participant
+        schema:
+          type: string
+      - name: serviceId
+        in: query
+        description: Identifier of the Service
+        schema:
+          type: string
+      - name: serviceOperation
+        in: query
+        description: Operation of the Service
+        schema:
+          type: string
+      - name: serviceRole
+        in: query
+        description: Role of the Service
+        schema:
+          type: string
+      - name: serviceStatus
+        in: query
+        description: Status of the Service
+        schema:
+          type: string
+      - name: serviceType
+        in: query
+        description: Type of the Service
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: The field to sort by the results
+        schema:
+          type: string
+      - name: sortOrder
+        in: query
+        description: The sorting direction
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTOServiceDTO'
+  /services/remote/smart-search/participants:
+    get:
+      tags:
+      - service
+      summary: Get a filtered list of Participants for the remote nodes
+      description: Get a filtered list of Participants for the remote nodes
+      parameters:
+      - name: limit
+        in: query
+        description: The size of the results page
+        schema:
+          format: int32
+          default: "10"
+          maximum: 100
+          minimum: 10
+          type: integer
+      - name: participantCommunity
+        in: query
+        description: Country of the Participant
+        schema:
+          type: string
+      - name: participantFunction
+        in: query
+        description: Function of the Participant
+        schema:
+          type: string
+      - name: participantId
+        in: query
+        description: Identifier of the Participant
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UUIDDescriptionCountryDTO'
+  /services/remote/smart-search/services:
+    get:
+      tags:
+      - service
+      summary: Get a filtered list of Services for the remote nodes
+      description: Get a filtered list of Services for the remote nodes
+      parameters:
+      - name: limit
+        in: query
+        description: The size of the results page
+        schema:
+          format: int32
+          default: "10"
+          maximum: 100
+          minimum: 10
+          type: integer
+      - name: serviceId
+        in: query
+        description: Identifier of the Service
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /services/remote/stats/count:
+    get:
+      tags:
+      - service
+      summary: Get number of remote Services
+      description: Get the number of Services in the remote nodes.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LongDTO'
+  /services/remote/{uuid}:
+    get:
+      tags:
+      - service
+      summary: Get a remote Service
+      description: Get a remote Service
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the Service
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceDTO'
+        "404":
+          description: Not found
+  /services/status/local/{uuid}:
+    put:
+      tags:
+      - service
+      summary: Update local Service status
+      description: Update local Service status
+      parameters:
+      - name: uuid
+        in: path
+        description: UUID of the Service
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceStatusUpdateDTO'
+        required: true
+      responses:
+        "204":
+          description: Successful operation
+        "404":
+          description: Not found
+        "400":
+          description: The request was not valid
+components:
+  schemas:
+    AuthorityBaseDTO:
+      required:
+      - country
+      - name
+      - communities
+      type: object
+      properties:
+        country:
+          pattern: \S
+          type: string
+        name:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        address:
+          maxLength: 1000
+          type: string
+        communities:
+          minItems: 1
+          type: array
+          items:
+            type: string
+    AuthorityDTO:
+      required:
+      - country
+      - name
+      - communities
+      type: object
+      properties:
+        country:
+          pattern: \S
+          type: string
+        name:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        address:
+          maxLength: 1000
+          type: string
+        communities:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        uuid:
+          type: string
+        node:
+          $ref: '#/components/schemas/AuthorityDTONode'
+    AuthorityDTONode:
+      type: object
+      properties:
+        uuid:
+          type: string
+        nodeId:
+          type: string
+    AuthorityDetailsDTO:
+      required:
+      - country
+      - name
+      - communities
+      type: object
+      properties:
+        country:
+          pattern: \S
+          type: string
+        name:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        address:
+          maxLength: 1000
+          type: string
+        communities:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        uuid:
+          type: string
+        node:
+          $ref: '#/components/schemas/AuthorityDTONode'
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/UUIDDescriptionDTO'
+        contactPersons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactPersonBaseDTO'
+    AuthorityForNodeConfigurationDTO:
+      required:
+      - country
+      - name
+      - communities
+      type: object
+      properties:
+        country:
+          pattern: \S
+          type: string
+        name:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        address:
+          maxLength: 1000
+          type: string
+        communities:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        uuid:
+          type: string
+    ContactPersonBaseDTO:
+      required:
+      - surname
+      - name
+      - email
+      type: object
+      properties:
+        surname:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        name:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        role:
+          maxLength: 1000
+          type: string
+        email:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        phone:
+          maxLength: 1000
+          pattern: "^$|^[+]?[0-9 ]{10,}$"
+          type: string
+        address:
+          maxLength: 1000
+          type: string
+    ContactPersonBaseWithUuidDTO:
+      required:
+      - surname
+      - name
+      - email
+      type: object
+      properties:
+        surname:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        name:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        role:
+          maxLength: 1000
+          type: string
+        email:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        phone:
+          maxLength: 1000
+          pattern: "^$|^[+]?[0-9 ]{10,}$"
+          type: string
+        address:
+          maxLength: 1000
+          type: string
+        uuid:
+          type: string
+    ContactPersonCreateDTO:
+      required:
+      - surname
+      - name
+      - email
+      - authorityUUID
+      type: object
+      properties:
+        surname:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        name:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        role:
+          maxLength: 1000
+          type: string
+        email:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        phone:
+          maxLength: 1000
+          pattern: "^$|^[+]?[0-9 ]{10,}$"
+          type: string
+        address:
+          maxLength: 1000
+          type: string
+        authorityUUID:
+          minLength: 1
+          type: string
+    ContactPersonDTO:
+      required:
+      - surname
+      - name
+      - email
+      type: object
+      properties:
+        surname:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        name:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        role:
+          maxLength: 1000
+          type: string
+        email:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        phone:
+          maxLength: 1000
+          pattern: "^$|^[+]?[0-9 ]{10,}$"
+          type: string
+        address:
+          maxLength: 1000
+          type: string
+        uuid:
+          type: string
+        contactFor:
+          type: array
+          items:
+            type: string
+        authority:
+          $ref: '#/components/schemas/NodeDTOManagingAuthority'
+    Date:
+      format: date
+      type: string
+      example: 2022-03-10
+    LongDTO:
+      type: object
+      properties:
+        value:
+          format: int64
+          type: integer
+    NodeBaseDTO:
+      required:
+      - name
+      - domain
+      - gateway
+      - classification
+      - countries
+      - trusted
+      - secureConnection
+      type: object
+      properties:
+        name:
+          maxLength: 1000
+          pattern: "^[a-zA-Z0-9-]*$"
+          type: string
+        domain:
+          pattern: \S
+          type: string
+        gateway:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        classification:
+          pattern: \S
+          type: string
+        countries:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        trusted:
+          type: boolean
+        secureConnection:
+          type: boolean
+        certificateFileContent:
+          type: string
+        certificateFileName:
+          maxLength: 1000
+          type: string
+    NodeConfigurationCreateDTO:
+      required:
+      - nodeProperties
+      - managingAuthority
+      - contactPersons
+      - systemParameters
+      type: object
+      properties:
+        nodeProperties:
+          $ref: '#/components/schemas/NodeConfigurationCreateDTONodeProperties'
+        managingAuthority:
+          $ref: '#/components/schemas/AuthorityBaseDTO'
+        contactPersons:
+          maxItems: 2
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactPersonBaseDTO'
+        systemParameters:
+          $ref: '#/components/schemas/SystemParameterBaseDTO'
+    NodeConfigurationCreateDTONodeProperties:
+      required:
+      - classification
+      - countries
+      type: object
+      properties:
+        classification:
+          pattern: \S
+          type: string
+        countries:
+          minItems: 1
+          type: array
+          items:
+            type: string
+    NodeConfigurationDTO:
+      type: object
+      properties:
+        nodeProperties:
+          $ref: '#/components/schemas/NodeBaseDTO'
+        managingAuthority:
+          $ref: '#/components/schemas/AuthorityForNodeConfigurationDTO'
+        contactPersons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactPersonBaseWithUuidDTO'
+        systemParameters:
+          $ref: '#/components/schemas/SystemParameterDTO'
+    NodeConfigurationUpdateDTO:
+      required:
+      - managingAuthorityUUID
+      - systemParameters
+      type: object
+      properties:
+        managingAuthorityUUID:
+          $ref: '#/components/schemas/UUID'
+        newContactPersons:
+          maxItems: 2
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactPersonBaseDTO'
+        registeredContactPersonUUIDs:
+          maxItems: 2
+          type: array
+          items:
+            format: uuid
+            pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+            type: string
+        systemParameters:
+          $ref: '#/components/schemas/SystemParameterBaseDTO'
+    NodeDTO:
+      required:
+      - name
+      - domain
+      - gateway
+      - classification
+      - countries
+      - trusted
+      - secureConnection
+      type: object
+      properties:
+        name:
+          maxLength: 1000
+          pattern: "^[a-zA-Z0-9-]*$"
+          type: string
+        domain:
+          pattern: \S
+          type: string
+        gateway:
+          maxLength: 1000
+          pattern: \S
+          type: string
+        classification:
+          pattern: \S
+          type: string
+        countries:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        trusted:
+          type: boolean
+        secureConnection:
+          type: boolean
+        certificateFileContent:
+          type: string
+        certificateFileName:
+          maxLength: 1000
+          type: string
+        uuid:
+          type: string
+        nodeId:
+          type: string
+        nodeVersion:
+          type: string
+        syncEndpointUrl:
+          type: string
+        messageEndpointUrl:
+          type: string
+        healthEndpointUrl:
+          type: string
+        nodeAdaptorEndpointUrl:
+          type: string
+        nodeAdaptorManagementEndpointUrl:
+          type: string
+        managingAuthority:
+          $ref: '#/components/schemas/NodeDTOManagingAuthority'
+        contactPersons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactPersonDTO'
+        lastSyncAttempt:
+          $ref: '#/components/schemas/Date'
+        lastSuccessfulSync:
+          $ref: '#/components/schemas/Date'
+        syncStatus:
+          $ref: '#/components/schemas/SyncStatus'
+        health:
+          $ref: '#/components/schemas/NodeHealth'
+    NodeDTOManagingAuthority:
+      type: object
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        country:
+          type: string
+    NodeHealth:
+      enum:
+      - GREEN
+      - YELLOW
+      - RED
+      - UNKNOWN
+      type: string
+    ParticipantCreateDTO:
+      required:
+      - classification
+      - endpointProtocol
+      - endpointUrl
+      - communities
+      - functions
+      - areasOfInterest
+      - authorityUUID
+      - name
+      type: object
+      properties:
+        classification:
+          pattern: \S
+          type: string
+        description:
+          maxLength: 1000
+          type: string
+        endpointProtocol:
+          pattern: \S
+          type: string
+        endpointUrl:
+          maxLength: 1000
+          pattern: "^(((http(s)?)://)?([-()_.!~*';/?@&=+$,#A-Za-z0-9])+(:[0-9]{1,5})?([-()_.!~*';/?@&=+$,#A-Za-z0-9])*)$"
+          type: string
+        healthEndpointUrl:
+          maxLength: 1000
+          pattern: "^(((http(s)?)://)?([-()_.!~*';/?@&=+$,#A-Za-z0-9])+(:[0-9]{1,5})?([-()_.!~*';/?@&=+$,#A-Za-z0-9])*)$"
+          type: string
+        communities:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        functions:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        areasOfInterest:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        authorityUUID:
+          $ref: '#/components/schemas/UUID'
+        registeredContactPersonUUIDs:
+          maxItems: 2
+          type: array
+          items:
+            format: uuid
+            pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+            type: string
+        newContactPersons:
+          maxItems: 2
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactPersonBaseDTO'
+        name:
+          maxLength: 15
+          pattern: "^[a-zA-Z0-9- ]*$"
+          type: string
+    ParticipantDTO:
+      required:
+      - classification
+      - endpointProtocol
+      - endpointUrl
+      - communities
+      - functions
+      - areasOfInterest
+      type: object
+      properties:
+        classification:
+          pattern: \S
+          type: string
+        description:
+          maxLength: 1000
+          type: string
+        endpointProtocol:
+          pattern: \S
+          type: string
+        endpointUrl:
+          maxLength: 1000
+          pattern: "^(((http(s)?)://)?([-()_.!~*';/?@&=+$,#A-Za-z0-9])+(:[0-9]{1,5})?([-()_.!~*';/?@&=+$,#A-Za-z0-9])*)$"
+          type: string
+        healthEndpointUrl:
+          maxLength: 1000
+          pattern: "^(((http(s)?)://)?([-()_.!~*';/?@&=+$,#A-Za-z0-9])+(:[0-9]{1,5})?([-()_.!~*';/?@&=+$,#A-Za-z0-9])*)$"
+          type: string
+        communities:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        functions:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        areasOfInterest:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        uuid:
+          type: string
+        name:
+          type: string
+        participantId:
+          type: string
+        nodeId:
+          type: string
+        authority:
+          $ref: '#/components/schemas/NodeDTOManagingAuthority'
+        contactPersons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactPersonDTO'
+    ParticipantUpdateDTO:
+      required:
+      - classification
+      - endpointProtocol
+      - endpointUrl
+      - communities
+      - functions
+      - areasOfInterest
+      - authorityUUID
+      type: object
+      properties:
+        classification:
+          pattern: \S
+          type: string
+        description:
+          maxLength: 1000
+          type: string
+        endpointProtocol:
+          pattern: \S
+          type: string
+        endpointUrl:
+          maxLength: 1000
+          pattern: "^(((http(s)?)://)?([-()_.!~*';/?@&=+$,#A-Za-z0-9])+(:[0-9]{1,5})?([-()_.!~*';/?@&=+$,#A-Za-z0-9])*)$"
+          type: string
+        healthEndpointUrl:
+          maxLength: 1000
+          pattern: "^(((http(s)?)://)?([-()_.!~*';/?@&=+$,#A-Za-z0-9])+(:[0-9]{1,5})?([-()_.!~*';/?@&=+$,#A-Za-z0-9])*)$"
+          type: string
+        communities:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        functions:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        areasOfInterest:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        authorityUUID:
+          $ref: '#/components/schemas/UUID'
+        registeredContactPersonUUIDs:
+          maxItems: 2
+          type: array
+          items:
+            format: uuid
+            pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+            type: string
+        newContactPersons:
+          maxItems: 2
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactPersonBaseDTO'
+    ResponseDTOAuthorityDTO:
+      type: object
+      properties:
+        total:
+          format: int32
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorityDTO'
+    ResponseDTOContactPersonDTO:
+      type: object
+      properties:
+        total:
+          format: int32
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactPersonDTO'
+    ResponseDTONodeDTO:
+      type: object
+      properties:
+        total:
+          format: int32
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/NodeDTO'
+    ResponseDTOParticipantDTO:
+      type: object
+      properties:
+        total:
+          format: int32
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParticipantDTO'
+    ResponseDTOServiceDTO:
+      type: object
+      properties:
+        total:
+          format: int32
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceDTO'
+    ServiceBaseDTO:
+      required:
+      - serviceType
+      - serviceOperation
+      - serviceRole
+      - dataModelVersion
+      - serviceModelVersion
+      type: object
+      properties:
+        serviceType:
+          pattern: \S
+          type: string
+        serviceOperation:
+          pattern: \S
+          type: string
+        serviceRole:
+          pattern: \S
+          type: string
+        serviceName:
+          maxLength: 15
+          pattern: "^[a-zA-Z0-9- ]*$"
+          type: string
+        dataModelVersion:
+          pattern: \S
+          type: string
+        serviceModelVersion:
+          pattern: \S
+          type: string
+        dataFreshness:
+          type: string
+        maxNoEntities:
+          format: int32
+          type: integer
+        maxNoRequests:
+          format: int32
+          type: integer
+        expResponseTime:
+          format: int32
+          type: integer
+        dataLocation:
+          type: array
+          items:
+            type: string
+        informationExchanged:
+          type: array
+          items:
+            type: string
+        queryByExample:
+          type: string
+        supportedQueries:
+          type: array
+          items:
+            type: string
+        streamServiceType:
+          type: string
+        gisServerUrl:
+          maxLength: 1000
+          pattern: "^(((http(s)?)://)?([-()_.!~*';/?@&=+$,#A-Za-z0-9])+(:[0-9]{1,5})?([-()_.!~*';/?@&=+$,#A-Za-z0-9])*)$"
+          type: string
+        gisServerUsername:
+          maxLength: 1000
+          minLength: 1
+          type: string
+        gisServerPassword:
+          maxLength: 1000
+          minLength: 1
+          type: string
+    ServiceCreateDTO:
+      required:
+      - serviceType
+      - serviceOperation
+      - serviceRole
+      - dataModelVersion
+      - serviceModelVersion
+      - participantId
+      - serviceId
+      type: object
+      properties:
+        serviceType:
+          pattern: \S
+          type: string
+        serviceOperation:
+          pattern: \S
+          type: string
+        serviceRole:
+          pattern: \S
+          type: string
+        serviceName:
+          maxLength: 15
+          pattern: "^[a-zA-Z0-9- ]*$"
+          type: string
+        dataModelVersion:
+          pattern: \S
+          type: string
+        serviceModelVersion:
+          pattern: \S
+          type: string
+        dataFreshness:
+          type: string
+        maxNoEntities:
+          format: int32
+          type: integer
+        maxNoRequests:
+          format: int32
+          type: integer
+        expResponseTime:
+          format: int32
+          type: integer
+        dataLocation:
+          type: array
+          items:
+            type: string
+        informationExchanged:
+          type: array
+          items:
+            type: string
+        queryByExample:
+          type: string
+        supportedQueries:
+          type: array
+          items:
+            type: string
+        streamServiceType:
+          type: string
+        gisServerUrl:
+          maxLength: 1000
+          pattern: "^(((http(s)?)://)?([-()_.!~*';/?@&=+$,#A-Za-z0-9])+(:[0-9]{1,5})?([-()_.!~*';/?@&=+$,#A-Za-z0-9])*)$"
+          type: string
+        gisServerUsername:
+          maxLength: 1000
+          minLength: 1
+          type: string
+        gisServerPassword:
+          maxLength: 1000
+          minLength: 1
+          type: string
+        participantId:
+          pattern: \S
+          type: string
+        serviceId:
+          maxLength: 1000
+          pattern: "^[a-z0-9-.]*$"
+          type: string
+    ServiceDTO:
+      required:
+      - serviceType
+      - serviceOperation
+      - serviceRole
+      - dataModelVersion
+      - serviceModelVersion
+      type: object
+      properties:
+        serviceType:
+          pattern: \S
+          type: string
+        serviceOperation:
+          pattern: \S
+          type: string
+        serviceRole:
+          pattern: \S
+          type: string
+        serviceName:
+          maxLength: 15
+          pattern: "^[a-zA-Z0-9- ]*$"
+          type: string
+        dataModelVersion:
+          pattern: \S
+          type: string
+        serviceModelVersion:
+          pattern: \S
+          type: string
+        dataFreshness:
+          type: string
+        maxNoEntities:
+          format: int32
+          type: integer
+        maxNoRequests:
+          format: int32
+          type: integer
+        expResponseTime:
+          format: int32
+          type: integer
+        dataLocation:
+          type: array
+          items:
+            type: string
+        informationExchanged:
+          type: array
+          items:
+            type: string
+        queryByExample:
+          type: string
+        supportedQueries:
+          type: array
+          items:
+            type: string
+        streamServiceType:
+          type: string
+        gisServerUrl:
+          maxLength: 1000
+          pattern: "^(((http(s)?)://)?([-()_.!~*';/?@&=+$,#A-Za-z0-9])+(:[0-9]{1,5})?([-()_.!~*';/?@&=+$,#A-Za-z0-9])*)$"
+          type: string
+        gisServerUsername:
+          maxLength: 1000
+          minLength: 1
+          type: string
+        gisServerPassword:
+          maxLength: 1000
+          minLength: 1
+          type: string
+        uuid:
+          type: string
+        serviceId:
+          type: string
+        participantId:
+          type: string
+        nodeId:
+          type: string
+        serviceStatus:
+          type: string
+    ServiceStatusUpdateDTO:
+      required:
+      - serviceStatus
+      type: object
+      properties:
+        serviceStatus:
+          pattern: \S
+          type: string
+    SyncStatus:
+      enum:
+      - FAIL
+      - SUCCESS
+      - NA
+      type: string
+    SystemParameterBaseDTO:
+      required:
+      - syncEnabled
+      - tableviewsDefaultNumOfElements
+      type: object
+      properties:
+        syncEnabled:
+          type: boolean
+        syncPullInterval:
+          format: int32
+          type: integer
+        tableviewsDefaultNumOfElements:
+          format: int32
+          type: integer
+    SystemParameterDTO:
+      required:
+      - syncEnabled
+      - tableviewsDefaultNumOfElements
+      type: object
+      properties:
+        syncEnabled:
+          type: boolean
+        syncPullInterval:
+          format: int32
+          type: integer
+        tableviewsDefaultNumOfElements:
+          format: int32
+          type: integer
+        syncLatestExecutionTime:
+          $ref: '#/components/schemas/Date'
+    UUID:
+      format: uuid
+      pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+      type: string
+    UUIDDescriptionCountryDTO:
+      type: object
+      properties:
+        uuid:
+          $ref: '#/components/schemas/UUID'
+        description:
+          type: string
+        country:
+          type: string
+    UUIDDescriptionDTO:
+      type: object
+      properties:
+        uuid:
+          $ref: '#/components/schemas/UUID'
+        description:
+          type: string

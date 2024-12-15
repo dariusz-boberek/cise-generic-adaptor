@@ -1,0 +1,44 @@
+== Technical Specifications
+
+=== System Requirements
+
+==== Hardware Requirements
+
+The CISE Generic Adaptor, as a Quarkus application, has modest hardware requirements. However, these are largely dependent on the load, message throughput, and message size, making the below specifications not necessarily production-ready. Especially in a containerized environment, such as when using Docker, hardware needs can increase. It’s important to iteratively evaluate and adjust these based on the live application’s performance.
+
+- Processor: Intel Core i3 or equivalent with at least 4 hardware threads, virtualization extensions (if used in virtual machine) enabled in BIOS/UEFI firmware
+- Memory: Minimum 4 GB (more may be required depending on the number and nature of running containers and H2 database usage)
+- Storage: Minimum 20 GB SSD (recommended to have more for Docker images, H2 database, and application data; consider allocating additional space for large images or data volumes)
+- BIOS: Hardware virtualization support enabled in BIOS settings (essential for Docker)
+
+==== Software Requirements
+
+- OS: GNU/Linux
+- Java: JDK 11 64bit (OpenJDK 11.0.12 / Amazon Corretto 11.0.18 LTS or newer)
+- Maven: 3.8.x minimum (only for development)
+- Docker: 24.0.x minimum (optional)
+- Docker Compose: 1.29.x minimum (optional)
+
+=== Architecture Overview
+
+==== System Architecture
+
+The CISE Generic Adaptor is a Java application developed with the Domain Driven Design (DDD) and Test Driven Development (TDD) paradigms. It leverages the Hexagonal (or Ports and Adapters) architecture, dividing business logic into areas of concern called hexagons. These hexagons communicate with the outside world through Ports, implemented by Adapters in the infrastructure layer. The core of each hexagon is its Service layer, where the actual business logic implementation resides.
+
+==== Component Interaction
+
+At its core, the CISE Generic Adaptor communicates with plugins through a well-defined interface. Upon startup, it scans a designated directory for jar files created as PF4J plugins. These plugins, built upon the CiseBasePlugin abstract class, provide the necessary mechanisms for communication with the Service Handler hexagon within the Generic Adaptor. This structure ensures a standardized approach to plugin development and integration, promoting efficiency and consistency.
+
+=== Technology Stack
+
+==== Programming Languages and Frameworks
+
+The CISE Generic Adaptor is developed as a Java application, specifically using JDK 11. It utilizes Quarkus Java framework, for building its architecture and build into quarkus "internal event bus mechanism" to facilitate efficient data transfer between modules (hexagons).
+
+==== External Libraries and Dependencies
+
+The CISE Generic Adaptor integrates the H2 Database for data management.
+
+**NOTE:** This database is tightly coupled with the application - switching databases would necessitate source recompilation and pointing to another DB driver (compatible with Quarkus).
+
+The system also incorporates PF4J for plugin management, enabling runtime loading of specific plugins that communicate with Legacy Systems.

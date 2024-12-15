@@ -1,0 +1,87 @@
+//TODO: reference: cucumber custom assertions example
+//  propose abstracting out asserts for same thins to methods so we can reuses them in different communication patterns also
+//  BUT also between scenarios - method names also should add clarity
+//  for re-occurring acceptance criteria to aggregate them together a pattern of AbstractAssert can be use
+// example:  actual.getTalks().forEach(TalksAssert.those(actual.getTalks()).areRelatedToTopic(topicName));
+
+
+1)
+        import org.assertj.core.api.AbstractAssert;
+
+        public class RecommendationAssert extends AbstractAssert<RecommendationAssert, Recommendation> {
+
+            public RecommendationAssert(Recommendation actual) {
+                super(actual, RecommendationAssert.class);
+            }
+
+            public void hasTalksRelatedTo(String topicName) {
+                matches(recommendation ->
+                        recommendation.getCriteria().getTopics().stream()
+                                .anyMatch(topic -> topic.getName().equals(topicName)),
+                        "recommendation's criteria has the topic " + topicName);
+
+                actual.getTalks().thoseAreRelatedToTopic(topicName);
+            }
+        }
+
+
+2)
+public class StringCharacterCountAssert extends AbstractAssert<StringCharacterCountAssert, String> {
+
+    public StringCharacterCountAssert(String actual) {
+        super(actual, StringCharacterCountAssert.class);
+    }
+
+    public static StringCharacterCountAssert assertThat(String actual) {
+        return new StringCharacterCountAssert(actual);
+    }
+
+    public StringCharacterCountAssert hasCharacterCount(int expectedCount) {
+        if (actual == null) {
+            failWithMessage("Expected character count to be <%s> but was <null>", expectedCount);
+        }
+
+        int characterCount = actual.length();
+        if (characterCount != expectedCount) {
+            failWithMessage("Expected character count to be <%s> but was <%s>", expectedCount, characterCount);
+        }
+
+        return this;
+    }
+}
+
+
+3)
+public class StringListCharacterCountAssert extends AbstractIterableAssert<StringListCharacterCountAssert, Iterable<String>, String, StringAssert> {
+
+    public StringListCharacterCountAssert(Iterable<String> actual) {
+        super(actual, StringListCharacterCountAssert.class);
+    }
+
+    public static StringListCharacterCountAssert assertThat(Iterable<String> actual) {
+        return new StringListCharacterCountAssert(actual);
+    }
+
+    public StringListCharacterCountAssert hasCharacterCount(int expectedCount) {
+        isNotNull();
+
+        for (String s : actual) {
+            if (s.length() != expectedCount) {
+                failWithMessage("Expected string to have <%d> characters but found <%d>", expectedCount, s.length());
+            }
+        }
+
+        return this;
+    }
+
+    @Override
+    protected StringAssert toAssert(String value, String description) {
+        return new StringAssert(value).as(description);
+    }
+
+    @Override
+    protected StringListCharacterCountAssert newAbstractIterableAssert(Iterable<? extends String> iterable) {
+        return new StringListCharacterCountAssert((Iterable<String>) iterable);
+    }
+
+}

@@ -1,0 +1,13 @@
+== Introduction to the Project
+
+The Generic Adaptor, created by JRC in 2023, is designed to facilitate the development of adaptors during the CISE Node
+v2 project's pre-operational and operational phases. It standardizes common elements in adaptor development,
+streamlining the process and minimizing the need to "reinvent the wheel."
+
+== Project Scope and Objectives
+
+The primary objective of the Generic Adaptor is to provide a framework that handles standard communication elements with
+the CISE Node while allowing stakeholders to implement custom logic through plugins. It aims to reduce development time
+for stakeholders by providing a common foundation for adaptor creation.
+
+

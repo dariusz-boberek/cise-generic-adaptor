@@ -1,0 +1,17 @@
+== RESTful API Interface Guide
+
+=== API Endpoints and Integration
+
+The CISE Generic Adaptor leverages RESTful APIs for efficient and modular communication. This design allows for the dynamic management of services and interactions with both the CISE Node and Legacy Systems.
+
+==== Communication with the CISE Node
+
+* The Generic Adaptor, as a Quarkus application, communicates bidirectionally with the CISE Node using RESTful interfaces.
+* `/rest/api/messages endpoint`: This REST resource is exposed by the adaptor for accepting CISE Messages from the Node. It follows the same protocols as the CISE Node, returning standard HTTP status codes for various scenarios.
+** `202 code`: Indicates that the message is accepted and is being processed. A successful Synchronous Acknowledgment (Sync Ack) is returned.
+** `200 code`: Signifies that a request has been terminated with an error. A Sync Ack detailing the error is returned.
+* `adaptor.cise-node-messages-url=http://localhost:8200/api/messages` this configuration in `application.properties` of the CISE Generic Adaptor specifies the endpoint of the CISE Node that adaptor should call.
+
+==== Communication with the Legacy System
+
+* Communication with the Legacy System happens through plugins. The plugins may expose their own RESTful interface employing for example an internal Spark Server. Configuration of those endpoints is the responsibility of the plugin developer.

@@ -1,0 +1,24 @@
+== Maintenance and Support
+
+//TODO: This section is subject to review and future updates.
+
+=== Log Management
+
+The adaptors and services within the system generate logs using
+custom `eu.cise.adaptor.domain.logging.AdaptorLogger` that can be used for monitoring the system's health and
+diagnosing issues focusing on tags that can be added to log message and providing customizable display (message can be
+displayed as standard log, or in JSON format - `eu.cise.adaptor.domain.logging.JsonLogger`). This is particularly
+useful given the adaptor's role in handling complex message structures and communication protocols.
+
+=== Software quality
+To create a report about software quality, the project supports the functionality of Sonarqube. A script to create it,
+is provided in the .devenv folder named sonarQubeAnalyzer.sh.
+The analysis that Sonarqube provides it is about Software quality. For test code coverage,
+refer to the IntelliJ IDEA test code coverage functionality when launching the project tests ('Run with Coverage').
+
+== Reference Documents
+
+Readers are advised to refer to "Oliveri et al., Architecture of the CISE Node - version 2, JRC126255, 2022" for a
+comprehensive understanding of the CISE communication protocol, data, and service models.
+
+

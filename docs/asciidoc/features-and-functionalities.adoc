@@ -1,0 +1,8 @@
+== Key Features and Functionalities
+
+* Standard Communication Handling: Ensures adherence to the CISE communication protocol for both incoming and outgoing messages.
+* Communication Security: The Generic Adaptor adheres to the security requirements imposed by the CISE Node (e.g. MTLS support). Its behavior is configurable through application.properties
+* Plugin System: Facilitates the integration of stakeholder-specific business logic.
+* Dual Role Functionality: Capable of acting both as an information consumer and provider.
+* Multi-Service Support: Each plugin represents a CISE service, allowing a single instance of the adaptor to handle multiple services.
+* Legacy System Integration: Offers various methods for Legacy System interaction and information exchange.

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns4:Push xmlns:ns4="http://www.cise.eu/servicemodel/v1/message/">
+    <CorrelationID>6839402c-5d5e-4028-a8cd-b41c14051508</CorrelationID>
+    <CreationDateTime>2023-04-11T19:08:34.761+02:00</CreationDateTime>
+    <MessageID>6839402c-5d5e-4028-a8cd-b41c14051508</MessageID>
+    <Priority>Low</Priority>
+    <RequiresAck>false</RequiresAck>
+    <Sender>
+        <SeaBasin>NorthSea</SeaBasin>
+        <ServiceID>node05.vessel.push.provider</ServiceID>
+        <ServiceOperation>Push</ServiceOperation>
+        <ServiceRole>Provider</ServiceRole>
+        <ServiceStatus>Online</ServiceStatus>
+        <ServiceType>VesselService</ServiceType>
+    </Sender>
+    <Recipient>
+        <SeaBasin>NorthSea</SeaBasin>
+        <ServiceID>node06.vessel.push.consumer</ServiceID>
+        <ServiceOperation>Push</ServiceOperation>
+        <ServiceRole>Consumer</ServiceRole>
+        <ServiceStatus>Online</ServiceStatus>
+        <ServiceType>VesselService</ServiceType>
+    </Recipient>
+    <Payload xsi:type="ns4:XmlEntityPayload" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <InformationSecurityLevel>NonClassified</InformationSecurityLevel>
+        <InformationSensitivity>Green</InformationSensitivity>
+        <IsPersonalData>false</IsPersonalData>
+        <Purpose>NonSpecified</Purpose>
+        <EnsureEncryption>false</EnsureEncryption>
+        <Vessel>
+            <Identifier>
+                <GeneratedBy>
+                    <AlternativeName>Organization Alternative Name</AlternativeName>
+                    <LegalName>Organization Legal Name</LegalName>
+                </GeneratedBy>
+                <UUID>235014365</UUID>
+            </Identifier>
+            <LocationRel>
+                <Location>
+                    <Geometry>
+                        <Latitude>40.885872</Latitude>
+                        <Longitude>8.432903</Longitude>
+                    </Geometry>
+                    <LocationQualitativeAccuracy>Medium</LocationQualitativeAccuracy>
+                </Location>
+                <COG>190.7</COG>
+                <Heading>185.0</Heading>
+                <PeriodOfTime>
+                    <StartDate>2022-12-16Z</StartDate>
+                    <StartTime>15:54:41.000Z</StartTime>
+                </PeriodOfTime>
+                <SourceType>Declaration</SourceType>
+                <SensorType>AutomaticIdentificationSystem</SensorType>
+                <SOG>13.1</SOG>
+            </LocationRel>
+            <IMONumber>235014365</IMONumber>
+            <MMSI>235014365</MMSI>
+            <NavigationalStatus>UnderWayUsingEngine</NavigationalStatus>
+        </Vessel>
+        <Vessel>
+            <Identifier>
+                <GeneratedBy>
+                    <AlternativeName>Organization Alternative Name</AlternativeName>
+                    <LegalName>Organization Legal Name</LegalName>
+                </GeneratedBy>
+                <UUID>333014377</UUID>
+            </Identifier>
+            <LocationRel>
+                <Location>
+                    <Geometry>
+                        <Latitude>40.878519</Latitude>
+                        <Longitude>8.398265</Longitude>
+                    </Geometry>
+                    <LocationQualitativeAccuracy>Medium</LocationQualitativeAccuracy>
+                </Location>
+                <COG>154.0</COG>
+                <Heading>143.0</Heading>
+                <PeriodOfTime>
+                    <StartDate>2022-12-16Z</StartDate>
+                    <StartTime>15:56:55.000Z</StartTime>
+                </PeriodOfTime>
+                <SourceType>Declaration</SourceType>
+                <SensorType>AutomaticIdentificationSystem</SensorType>
+                <SOG>10.5</SOG>
+            </LocationRel>
+            <IMONumber>333014377</IMONumber>
+            <MMSI>333014377</MMSI>
+            <NavigationalStatus>UnderWayUsingEngine</NavigationalStatus>
+        </Vessel>
+        <Vessel>
+            <Identifier>
+                <GeneratedBy>
+                    <AlternativeName>Organization Alternative Name</AlternativeName>
+                    <LegalName>Organization Legal Name</LegalName>
+                </GeneratedBy>
+                <UUID>425014468</UUID>
+            </Identifier>
+            <LocationRel>
+                <Location>
+                    <Geometry>
+                        <Latitude>40.944233</Latitude>
+                        <Longitude>8.348204</Longitude>
+                    </Geometry>
+                    <LocationQualitativeAccuracy>Medium</LocationQualitativeAccuracy>
+                </Location>
+                <COG>154.0</COG>
+                <Heading>143.0</Heading>
+                <PeriodOfTime>
+                    <StartDate>2022-12-16Z</StartDate>
+                    <StartTime>15:56:55.000Z</StartTime>
+                </PeriodOfTime>
+                <SourceType>Declaration</SourceType>
+                <SensorType>AutomaticIdentificationSystem</SensorType>
+                <SOG>10.5</SOG>
+            </LocationRel>
+            <IMONumber>425014468</IMONumber>
+            <MMSI>425014468</MMSI>
+            <NavigationalStatus>UnderWayUsingEngine</NavigationalStatus>
+        </Vessel>
+    </Payload>
+    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+        <SignedInfo>
+            <CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+            <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+            <Reference URI="">
+                <Transforms>
+                    <Transform Algorithm="http://www.w3.org/TR/1999/REC-xslt-19991116">
+                        <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:s="http://www.w3.org/2000/09/xmldsig#">
+                            <xsl:strip-space elements="*"/>
+                            <xsl:output indent="false" method="xml" omit-xml-declaration="yes"/>
+                            <xsl:template match="*[not(self::s:Signature)]">
+                                <xsl:element name="{local-name()}">
+                                    <xsl:apply-templates select="*|text()"/>
+                                </xsl:element>
+                            </xsl:template>
+                            <xsl:template match="s:Signature"/>
+                        </xsl:stylesheet>
+                    </Transform>
+                    <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+                </Transforms>
+                <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                <DigestValue>AItJU9cwGYXb2vg+bas26SSzRUU=</DigestValue>
+            </Reference>
+        </SignedInfo>
+        <SignatureValue>SSJW4QSrhkXdxauYhqBmUUgTjtduCE2JTDezBx1h7Xp+gfA9R9QdpL40bQv5CbN5ALEEYew7CA/A&#13;
+f5YHWDoj1cH/xJj4RQXOOm4kt1ceXD3Jl+6MOx48ZF2TcKOJcN+plo9DqfRfQ4UfkPUI4nF2ibGr&#13;
+xnX6vwnj7NZSPo0OF0GKGQPGrVH163yULw2N72l11C4rmgBHPsur7RjEMlQqKicSEn84ehgDmpUy&#13;
+P1Fa6OMtX1+9Y7Bgd0Ln3VXoHErL/AYM7oZ6xZ8JLvqXF0VNyxoqVJrQYB073Lv//QlBIb7pxNsU&#13;
+NctW7MMyB20ImVVV4XeKv+SE0tgY07O90VM0mQ==</SignatureValue>
+        <KeyInfo>
+            <X509Data>
+                <X509SubjectName>CN=cisesim-nodeex.nodeex.eucise.ex, OU=Participants, O=cisesim-nodeex.nodeex, DC=eucise, C=ex</X509SubjectName>
+                <X509Certificate>MIIETzCCAzegAwIBAgICEAEwDQYJKoZIhvcNAQELBQAwPTELMAkGA1UEBhMCZXgxDzANBgNVBAoM&#13;
+BmV1Y2lzZTEdMBsGA1UEAwwUc2lnbmluZy1jYS5ldWNpc2UuZXgwHhcNMTkxMTI4MTEyMjAzWhcN&#13;
+MjkxMTI1MTEyMjAzWjCBhjELMAkGA1UEBhMCZXgxFjAUBgoJkiaJk/IsZAEZFgZldWNpc2UxHjAc&#13;
+BgNVBAoMFWNpc2VzaW0tbm9kZWV4Lm5vZGVleDEVMBMGA1UECwwMUGFydGljaXBhbnRzMSgwJgYD&#13;
+VQQDDB9jaXNlc2ltLW5vZGVleC5ub2RlZXguZXVjaXNlLmV4MIIBIjANBgkqhkiG9w0BAQEFAAOC&#13;
+AQ8AMIIBCgKCAQEA0csmXEmC95d4+urR4JtFckjUASibK3ZGd2Q9ksZc4I2/HDnnbojMpmFn+McF&#13;
+iJnjB+Q16mmbGqQ6sa7EBBm4in6z99nSg3InnPCSn/DFeDzQNVYG7Gc0MmH1cpV3uXmCcxnliHWv&#13;
+wYKknx1VJvdkYJOQPRHkODTMsEkv8nHhiYCHDqHynoABdZafps5+t3LTA/m7Ohra6UYfnpX27U47&#13;
+AHX24QhnwTQ98bmQtmEFkaGDjepRbk1bQ7jJyy8yr1LNplbV35fXyDPn0370gExYJigwONJmzK2v&#13;
+bmcy+KRCf41GtL2+qkkAJcN5SupPVZEJoqakYxfR5C+UjNIT40Kb5QIDAQABo4IBDTCCAQkwCQYD&#13;
+VR0TBAIwADARBglghkgBhvhCAQEEBAMCBkAwQAYJYIZIAYb4QgENBDMWMVNlcnZlciBjZXJ0aWZp&#13;
+Y2F0ZSBnZW5lcmF0ZWQgZm9yIEpSQyBDSVNFIFRlc3RiZWQwHQYDVR0OBBYEFD3swvIY+MMLLhur&#13;
+p+crvr+QcT9QMGMGA1UdIwRcMFqAFNHAvqxi/RkXPZo9NWY7bhfBsBZAoT6kPDA6MQswCQYDVQQG&#13;
+EwJleDEPMA0GA1UECgwGZXVjaXNlMRowGAYDVQQDDBFyb290LWNhLmV1Y2lzZS5leIICEAAwDgYD&#13;
+VR0PAQH/BAQDAgWgMBMGA1UdJQQMMAoGCCsGAQUFBwMBMA0GCSqGSIb3DQEBCwUAA4IBAQBjMFPU&#13;
+hJzhVII9MzoTrOucNIToljggDlyZO64KKjUAcC+PhnGvefJzrqpKd/4Fw98ZUYJoTHaoewBEu4h0&#13;
+IzUe4FmKplbU9Pp2+5hw+ik20WVnfjXFnC0vaTbMC1xJBFtVDU4Zqxqd9B3nkq7SQmd1BzaomLq2&#13;
+Rs5mfWQmRm0tpgz1eyqjNlxZ1HAawtZKsCsbgx6hP7pgEX33iMEnv5NZ66AvBcZIoYxhWGDF9GhN&#13;
+Ew1QjbzHHzIPTQCSHsBR/CfGmbDZamI6u71ACVdwAwRUVpjB/MMOs44ec3xD82JubSq/0QHcLRpo&#13;
+1LjLRbhNfrGnxb4Vv/fozehzMQqxuxuK</X509Certificate>
+            </X509Data>
+        </KeyInfo>
+    </Signature>
+</ns4:Push>

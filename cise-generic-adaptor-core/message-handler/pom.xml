@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>cise-generic-adaptor-core</artifactId>
+        <groupId>eu.cise.adaptor</groupId>
+        <version>3.0.0</version>
+    </parent>
+    <artifactId>message-handler</artifactId>
+    <name>message-handler</name>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <source.version>11</source.version>
+        <target.version>11</target.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>eu.cise.adaptor</groupId>
+            <artifactId>core-common</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <!-- CISE libraries -->
+        <dependency>
+            <artifactId>eucise-model-helpers</artifactId>
+            <groupId>eu.europa.ec.jrc.marex</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>signature-adapters</artifactId>
+            <groupId>eu.europa.ec.jrc.marex</groupId>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

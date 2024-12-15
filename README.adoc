@@ -1,0 +1,31 @@
+:doctype: book
+:icons: font
+:toc2:
+:sectlinks:
+:sectnums:
+:sectanchors:
+:sectlinks:
+
+:homepage: https://github.com/jrc-cise/generic-adaptor-documentation
+:imagesdir: docs/asciidoc/images
+:source-highlighter: coderay
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:source-language: properties
+
+= Generic Adaptor Reference Guide
+
+In order for the Generic Adaptor project to be built, the CISE libraries are required. The CISE stakeholders can request access to the cise-core-repo repository by sending an email to mss@emsa.europa.eu
+
+For detailed information, please refer to the following chapters:
+
+* link:docs/asciidoc/introduction.adoc[Project Overview]
+* link:docs/asciidoc/features-and-functionalities.adoc[Key Features and Functionalities]
+* link:docs/asciidoc/technical-specifications.adoc[Technical Specifications]
+* link:docs/asciidoc/installation-setup.adoc[Installation and Setup]
+* link:docs/asciidoc/configuration-customization.adoc[Configuration and Customization]
+* link:docs/asciidoc/api-interface-guide.adoc[API Interface Guide]
+* link:docs/asciidoc/additional-resources.adoc[Additional Resources]

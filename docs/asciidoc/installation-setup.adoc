@@ -1,0 +1,105 @@
+== Installation and Setup
+
+=== Environment Setup
+
+==== Operating System Configuration
+
+Ensure the following tools are accessible from the terminal:
+
+* Running the Adaptor
+** Java Runtime: Confirm JDK 11 installation with `java -version`.
+
+* Building the Adaptor
+** Java Compiler (javac): Confirm JDK 11 installation with `javac -version`.
+** Maven: Verify with `mvn -version`.
+
+* Building the Adaptor and running it in docker, additionally:
+** Docker: Check availability using `docker --version`.
+** Docker Compose: Validate installation with `docker-compose --version`.
+
+==== Building Adaptor
+
+Build with a typical maven command like
+[source,shell]
+mvn clean install
+
+Artefacts created in `/target` directory during this process are:
+
+* `cise-generic-adaptor-{version}-bin.tar.gz`
+* `cise-generic-adaptor-{version}-docs.tar.gz`
+* `cise-generic-adaptor-{version}-src.tar.gz`
+
+**cise-generic-adaptor-{version}-bin.tar.gz** - Contains the binary distribution of the CISE Generic Adaptor, including executable JAR files, libraries, and other dependencies. Notably, this package does not include plugins  or valid for your environment jks file. It includes a sample configuration file `application.properties` in its config directory but this must be updated (please see  link:docs/asciidoc/configuration-customization.adoc[Configuration and Customization]). The plugins directory is empty by design, allowing stakeholders to manually add their specific plugins along with their configuration files.
+
+**cise-generic-adaptor-{version}-docs.tar.gz** - This archive includes documentation, such as ASCII docs and JavaDocs, pertaining to the CISE Generic Adaptor.
+
+**cise-generic-adaptor-{version}-src.tar.gz** - This package contains the source code of the CISE Generic Adaptor, including all Java source files, resource files, and Maven project files. It encompasses various modules like cise-adaptor-domain, cise-adaptor-plugin-api, and plugins, with each module containing its own pom.xml and source code.
+
+== Build and Generate the THIRD-PARTY.txt
+
+In case you need to generate the list of licenses used in the project in the file: `target/generated-sources/license/THIRD-PARTY.txt`
+you need to activate the `gen-third-party` maven profile through the command:
+[source,shell]
+mvn clean install -Dgen-third-party
+
+== Generate the REST clients for the Service and Subscription Registries
+If there is a new version of the OpenAPI specifications for the Service / Subscription registries of the CISE Node, then the existing clients and DTOs have to be regenerated. The generation of these classes happen through the `maven quarkus-openapi-generator` dependency and the `quarkus-maven-plugin` build plugin of the cise-generic-adaptor-quarkus module. These maven dependencies generate the files inside the `cise-gneric-adaptor-quarkus/target/generated-sources/open-api-yaml` path when
+[source,shell]
+mvn clean install -Dgen-node-api-code
+
+is executed. After the generation of the classes the `exec-maven-plugin` calls the `cise-generic-adaptor-quarkus/src/main/scripts/cleanUpServiceAndSubscriptionRegistryOpenAPICode.sh` script to remove unused annotations from the generated code.
+
+Then, the generated API interfaces and DTOs from the path `target/generated-sources/open-api-yaml/org/openapi/quarkus/service_registry_openapi_yaml/model and api` are copied inside the `cise-generic-adaptor-core/service-handler/src/main/java/eu/cise/adaptor/core/servicehandler/port/out/service_registry_openapi_yaml/model and api` and `subscription_registry_openapi_yaml/model and api` respectively and appropriate changes (if required) to the code of the `cise-generic-adaptor-core` module should take place.
+
+Overall the process should be:
+
+1. Update the openapi yaml files inside the `cise-generic-adaptor-quarkus/openapi` directory
+2. In the cise-generic-adaptor-quarkus module, execute the `mvn clean install -Dgen-node-api-code` command
+3. Notice the generated / updated files inside the `cise-generic-adaptor-core` and `cise-generic-adaptor-quarkus` modules
+4. NOTE: Manual Step : Copy the generated clients from the target directory inside the `cise-generic-adaptor-quarkus/src/main/java/eu/cise/adaptor/quarkus/nodeapi/service_registry_openapi_yaml/`  directory. Also, update all the copied classes with the following annotations (for the service registry clients):
+[source,java]
+@RegisterRestClient(configKey = "cise-rest-api-client")
+@RegisterProvider(ServiceRegistryBearerAuthenticationFilter.class)
+@RegisterProvider(NotAuthorizedResponseExceptionMapper.class)
+@KeycloakInterceptor
+@ApplicationScoped
+
+and for the subscription registry clients:
+[source,java]
+@RegisterRestClient( configKey="cise-rest-api-client")
+@RegisterProvider(ServiceRegistryBearerAuthenticationFilter.class)
+@RegisterProvider(NotAuthorizedResponseExceptionMapper.class)
+@KeycloakInterceptor
+@ApplicationScoped
+
+
+Please note that the generated clients require the `@KeycloakInterceptor` annotation so that the Keycloak token is handled correctly through the `KeycloakTokenGetterInterceptor` (you can refer to the Quarkus interceptors https://quarkus.io/guides/cdi#interceptors[here] )
+
+After making all the required changes you need to build the code and verify that everything is working:
+
+1. After you perform any changes to tests that may be required, execute the `mvn clean install` command in the top level `cise-generic-adaptor` project
+2. *NOTE* in case of javadoc errors, you need to update the `excludedPackageNames` in the maven-javadoc-plugin in the main pom.xml file
+
+
+== Adaptor Deployment
+
+The CISE Generic Adaptor can be deployed as standalone java application, extracting the `cise-generic-adaptor-{version}-bin.tar.gz` archive file, updating the application.properties (as explained in the link:docs/asciidoc/configuration-customization)[Configuration and Customization] section) and running the `cise-generic-adaptor` script. When extracted, the Generic Adaptor does not have any plugins so it cannot be used to receive / send messages to the CISE Node. In order to do so, appopriate plugins have to be created
+
+=== Adaptor Plugins Dependencies Deployment
+
+Access to a separate project where plugins for the CISE Generic Adaptor exist, is required as a prerequisite. In each plugin, a `*PluginConfig` class, extending `eu.cise.adaptor.plugin.PluginConfig`, is found, annotated with the exact property filename. For ease of configuration, the plugin property file is the only plugin file that remains outside of the jar and should be placed in the plugins directory. The plugins are provided as a fat jar, encapsulating all required dependencies for their functionality. The plugins directory can accommodate an unlimited number of plugins, all of which are dynamically loaded upon the CISE Generic Adaptor startup. Each plugin represents a distinct CISE service, with a unique `service-id` defined in its properties, and operates on a unique port for communication.
+
+==== Running the standalone CISE Generic Adaptor
+
+For the standalone operation of the CISE Generic Adaptor, it is assumed that the plugins, along with their corresponding properties, are correctly placed in the plugins directory. Additionally, it is presupposed that the `application.properties` file is adequately configured for interaction with the CISE Node (defining the communication protocol to be either http or https using MTLS) instance (or CISE Simulator - used only through http), and the required JKS file is present. To initiate the Generic Adaptor, the `cise-generic-adaptor` script, located at the base level of the extracted archive `cise-generic-adaptor-<version>-bin.tar.gz`, needs to be executed.
+
+The cise-generic-adaptor script offers various commands for different modes of operation:
+
+* **start** - Launches the adaptor in a detached shell using the nohup command. This mode is suitable for running the adaptor in the background without tying it to the current terminal session.
+* **run** - Starts the adaptor in the foreground, making it run in the current terminal session and allowing for direct interaction and monitoring.
+* **debug-start** - Initiates the adaptor in a detached shell with debugging enabled, listening on port 9999. This mode is useful for debugging purposes, allowing for a Java remote debugger to connect to the adaptor.
+* **debug-run** - Similar to debug-start, but runs the adaptor in the foreground. This command facilitates immediate debugging in the current terminal session.
+* **stop** - Stops the adaptor if it is running in the background.
+* **restart** - Restarts the adaptor, effectively stopping and then starting it again.
+* **status** - Displays the current status of the adaptor, indicating whether it is running or stopped.
+

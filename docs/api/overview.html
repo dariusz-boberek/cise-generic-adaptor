@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xml:lang="en">
+<head>
+    <title>CISE Generic Adaptor Overview</title>
+</head>
+<body>
+<p>
+    This document provides an overview of the CISE Generic Adaptor.
+</p>
+
+<div id="keyFeatures">
+    <h2>Key Features</h2>
+    <p>
+        The CISE Generic Adaptor streamlines adaptor development for the CISE Node, providing a standard framework that simplifies and accelerates the creation of CISE adaptors. Key features include:
+    </p>
+    <ul>
+        <li><strong>Standard Communication Handling:</strong> Ensures strict adherence to the CISE communication protocol for both incoming and outgoing messages, maintaining consistency and reliability in data exchange.</li>
+        <li><strong>Plugin System:</strong> Provides a flexible architecture that allows stakeholders to integrate custom business logic seamlessly, catering to specific operational requirements.</li>
+        <li><strong>Dual Role Functionality:</strong> Capable of functioning as both an information consumer and provider, the Generic Adaptor offers versatility in handling various types of data interactions.</li>
+        <li><strong>Multi-Service Support:</strong> Each plugin within the adaptor represents a distinct CISE service, enabling a single instance of the adaptor to manage multiple services effectively.</li>
+        <li><strong>Legacy System Integration:</strong> Offers (through the use of plugins) unconstrained interaction and data exchange with Legacy Systems, ensuring smooth integration and compatibility with existing infrastructures.</li>
+    </ul>
+</div>
+
+<div id="componentsInterfaces">
+    <h2>Components and Interfaces</h2>
+    <p>
+        The CISE Generic Adaptor employs a modular architecture based on Domain Driven Design (DDD) and Test Driven Development (TDD), using the Hexagonal (or Ports and Adapters) architecture approach.
+        <br>This architecture divides business logic into distinct hexagons, communicating with external entities through abstract interfaces called Ports, implemented by Adapters within the infrastructure layer.
+    </p>
+    <h3>Message Handler Hexagon</h3>
+    <p>
+        The Message Handler is responsible for interactions with the CISE Node and the Service Handler. It verifies, checks the signature of incoming and signs the outgoing CISE Messages.
+    </p>
+    <ul>
+        <li><strong>{@link eu.cise.adaptor.core.messagehandler.port.in.IncomingNodeToMessageHandlerPort}:</strong> Interface for receiving messages from the CISE Node.</li>
+        <li><strong>{@link eu.cise.adaptor.core.messagehandler.port.out.OutgoingMessageHandlerToServiceHandlerPort}:</strong> Interface for forwarding messages to the Service Handler.</li>
+        <li><strong>{@link eu.cise.adaptor.core.messagehandler.port.in.IncomingServiceHandlerToMessageHandlerPort}:</strong> Interface for receiving messages from the Service Handler.</li>
+        <li><strong>{@link eu.cise.adaptor.core.messagehandler.port.out.OutgoingMessageHandlerToNodePort}:</strong> Interface for sending messages to the CISE Node.</li>
+        <li><strong>{@link eu.cise.adaptor.core.messagehandler.service.MessageHandlerVerificationService}:</strong> Service for validating message structure and signature.</li>
+        <li><strong>{@link eu.cise.adaptor.core.messagehandler.service.MessageHandlerDeliveryService}:</strong> Service for preparing messages to be sent to the CISE Node.</li>
+    </ul>
+
+    <h3>Service Handler Hexagon</h3>
+    <p>
+        The Service Handler manages the CISE Service Model, handling message envelopes and maintaining an internal database for message tracking. Also, it is responsible for routing the CISE Mesages to the
+        appropriate plugin based on the CISE Service ID.
+    </p>
+    <ul>
+        <li><strong>{@link eu.cise.adaptor.core.servicehandler.port.in.IncomingMessageHandlerToServiceHandlerPort}:</strong> Interface for receiving messages from the Message Handler.</li>
+        <li><strong>{@link eu.cise.adaptor.core.servicehandler.port.in.ReceiveFromLegacySystemPort}:</strong> Abstract class for plugins to implement, handling data from Legacy Systems.</li>
+        <li><strong>{@link eu.cise.adaptor.core.servicehandler.port.out.MessageRepositoryPort}:</strong> Interface for interacting with the internal message database.</li>
+        <li><strong>{@link eu.cise.adaptor.core.servicehandler.port.out.OutgoingServiceHandlerToMessageHandlerPort}:</strong> Interface for sending messages to the Message Handler.</li>
+        <li><strong>{@link eu.cise.adaptor.core.servicehandler.port.out.SendToLegacySystemPort}:</strong> Interface for sending data to Legacy Systems.</li>
+        <li><strong>{@link eu.cise.adaptor.core.servicehandler.service.ServiceHandlerRoutingService}:</strong> Service for routing incoming messages to the appropriate plugin.</li>
+        <li><strong>{@link eu.cise.adaptor.core.servicehandler.service.ServiceHandlerMessageBuilderService}:</strong> Service for constructing the CISE Message envelope based on plugin data.</li>
+    </ul>
+</div>
+
+<div id="overviewBody">
+    <!-- Detailed Documentation -->
+    <p>
+        For more insights into the CISE Generic Adaptor, including guides, API documentation, and installation instructions, please refer to our <a href="../../asciidoc-html/index.html">AsciiDoc documentation</a>.
+    </p>
+
+</div>
+</body>
+</html>
